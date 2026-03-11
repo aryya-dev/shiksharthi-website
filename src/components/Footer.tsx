@@ -18,7 +18,7 @@ const Footer = () => (
         <div className="space-y-5">
   <div className="inline-block bg-white p-3 rounded-lg">
     <img
-      src="/shiksharthi logo.jpg"
+      src="/shiksharthi-logo.jpg"
       alt="Shiksharthi"
       className="h-16 w-auto object-contain"
     />
@@ -74,11 +74,12 @@ const Footer = () => (
                 label: "Instagram",
                 link: "https://www.instagram.com/shiksharthi.edu.institute/",
               },
-              /*{
+              {
                 icon: Youtube,
                 label: "YouTube",
-                link: "https://youtube.com/yourchannel",
+                link: "https://www.youtube.com/channel/UCAUFyRDZ9z_s6QAuKNFgf0Q",
               },
+              /*
               {
                 icon: Linkedin,
                 label: "LinkedIn",

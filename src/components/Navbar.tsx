@@ -33,12 +33,17 @@ const Navbar = () => {
       <div className="container mx-auto flex items-center justify-between px-6">
 
         {/* Logo */}
-        <a href="#" className="flex items-center gap-2">
-          <GraduationCap className="h-8 w-8 text-[#eab308]" />
-          <span className="text-lg font-bold text-[#142850]">
-            Shiksharthi
-          </span>
-        </a>
+       <a href="/" className="flex items-center group">
+  <div className="bg-white px-3 py-1.5 rounded-xl border border-[#eab308]/70 shadow-sm 
+                  transition-all duration-300 ease-out
+                  group-hover:shadow-lg group-hover:-translate-y-0.5 group-hover:border-[#eab308]">
+    <img
+      src="/shiksharthi-logo.jpg"
+      alt="Shiksharthi Institute"
+      className="h-9 w-auto object-contain"
+    />
+  </div>
+</a>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-10">

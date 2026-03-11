@@ -35,7 +35,7 @@ const FromPrincipalsDesk = () => (
         <div className="max-w-xl text-center lg:text-left">
 
           <span className="text-xs font-semibold tracking-widest uppercase text-[#eab308]">
-            Principal Message
+            Principal's Message
           </span>
 
           <div className="flex justify-center lg:justify-start mt-3 mb-6">
@@ -80,7 +80,7 @@ const FromPrincipalsDesk = () => (
   <div className="max-w-xl text-center lg:text-left order-2 lg:order-1">
 
     <span className="text-xs font-semibold tracking-widest uppercase text-[#eab308]">
-      Principal Message
+      HOD's Message
     </span>
 
     <div className="flex justify-center lg:justify-start mt-3 mb-6">
@@ -103,10 +103,11 @@ const FromPrincipalsDesk = () => (
       <p className="font-semibold text-[#142850] text-lg">
         Arghya Saha
       </p>
-
-      <p className="text-sm text-slate-500">
-        Principal, Shiksharthi Academic Institute
-      </p>
+      <p className="text-slate-500 text-sm leading-relaxed">
+  Head of Department – Physics & Mathematics
+  <br />
+  Shiksharthi Academic Institute
+</p>
     </div>
 
   </div>

@@ -59,6 +59,7 @@
     "react-intersection-observer": "^10.0.3",
     "react-resizable-panels": "^2.1.9",
     "react-router-dom": "^6.30.3",
+    "react-window": "^2.2.7",
     "recharts": "^2.15.4",
     "sonner": "^1.7.4",
     "swiper": "^12.1.2",
