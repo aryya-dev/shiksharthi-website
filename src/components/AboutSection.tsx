@@ -42,7 +42,7 @@ const AboutSection = () => (
           </div>
 
           <p className="text-slate-600 mt-8 leading-relaxed">
-            Shiksharthi Academic Institute has consistently focused on
+            Shiksharthi Educational Institute has consistently focused on
             redefining academic excellence through disciplined planning,
             innovative teaching strategies, and structured result-oriented
             mentorship.

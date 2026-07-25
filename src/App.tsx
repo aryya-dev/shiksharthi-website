@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import ScrollToTop from "@/components/ScrollToTop";
+import ScrollManager from "@/components/ScrollManager";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 
 import MainLayout from "./layouts/MainLayout";
@@ -12,6 +12,7 @@ import PortalLayout from "./layouts/PortalLayout";
 
 import Index from "./pages/Index";
 import AchieversPage from "./pages/AchieversPage";
+import GalleryPage from "./pages/GalleryPage";
 import NotFound from "./pages/NotFound";
 
 // 🔐 Portal Core
@@ -39,7 +40,7 @@ function App() {
         <Sonner />
 
         <BrowserRouter>
-          <ScrollToTop />
+          <ScrollManager />
           <ScrollToTopButton />
 
           <Routes>
@@ -48,6 +49,7 @@ function App() {
             <Route element={<MainLayout />}>
               <Route path="/" element={<Index />} />
               <Route path="/achievers" element={<AchieversPage />} />
+              <Route path="/gallery" element={<GalleryPage />} />
             </Route>
 
             {/* ================= LOGIN PAGE ================= */}

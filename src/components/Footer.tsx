@@ -6,55 +6,54 @@ import {
   Linkedin,
   MapPin,
 } from "lucide-react";
+import { useAppNavigation } from "@/hooks/useAppNavigation";
 
-const Footer = () => (
-  <footer className="bg-[#0f1f3d] text-white pt-20 pb-10 px-6">
-    <div className="max-w-7xl mx-auto">
+const Footer = () => {
+  const { navItems, handleNavClick } = useAppNavigation();
 
-      {/* Top Grid */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.8fr] items-start gap-16 mb-16">
+  return (
+    <footer className="bg-[#0f1f3d] text-white pt-20 pb-10 px-6">
+      <div className="max-w-7xl mx-auto">
 
-        {/* Brand */}
-        <div className="space-y-5">
-  <div className="inline-block bg-white p-3 rounded-lg">
-    <img
-      src="/shiksharthi-logo.jpg"
-      alt="Shiksharthi"
-      className="h-16 w-auto object-contain"
-    />
-  </div>
+        {/* Top Grid */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.8fr] items-start gap-16 mb-16">
 
-          <p className="text-sm text-white/60 leading-relaxed max-w-xs">
-            Kolkata’s trusted academic institute delivering structured
-            preparation for Foundation, Boards, JEE, and NEET since 2010.
-          </p>
-        </div>
+          {/* Brand */}
+          <div className="space-y-5">
+    <div className="inline-block bg-white p-3 rounded-lg">
+      <img
+        src="/shiksharthi-logo.jpg"
+        alt="Shiksharthi"
+        className="h-16 w-auto object-contain"
+      />
+    </div>
 
-        {/* Quick Links */}
-        <div className="text-center">
-          <h4 className="font-semibold mb-5 text-sm tracking-widest uppercase text-[#eab308]">
-            Quick Links
-          </h4>
+            <p className="text-sm text-white/60 leading-relaxed max-w-xs">
+              Kolkata’s trusted academic institute delivering structured
+              preparation for Foundation, Boards, JEE, and NEET since 2010.
+            </p>
+          </div>
 
-          <ul className="space-y-3">
-            {[
-              "About",
-              "Programs",
-              "Achievements",
-              "Testimonials",
-              "Contact",
-            ].map((link) => (
-              <li key={link}>
-                <a
-                  href={`#${link.toLowerCase()}`}
-                  className="text-sm text-white/60 hover:text-[#eab308] transition-colors duration-200"
-                >
-                  {link}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+          {/* Quick Links */}
+          <div className="text-center">
+            <h4 className="font-semibold mb-5 text-sm tracking-widest uppercase text-[#eab308]">
+              Quick Links
+            </h4>
+
+            <ul className="space-y-3">
+              {navItems.map((item) => (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    onClick={() => handleNavClick(item)}
+                    className="text-sm text-white/60 hover:text-[#eab308] transition-colors duration-200 cursor-pointer"
+                  >
+                    {item.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
 
         {/* Social */}
         <div className="text-center">
@@ -154,7 +153,8 @@ const Footer = () => (
       </div>
 
     </div>
-  </footer>
-);
+    </footer>
+  );
+};
 
 export default Footer;

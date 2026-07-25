@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Users, Award, BookOpen } from "lucide-react";
 import heroIllustration from "@/assets/hero-illustration.png";
+import { useAppNavigation } from "@/hooks/useAppNavigation";
 
 const stats = [
   { icon: Users, label: "1000+ Students", delay: "0.2s" },
@@ -9,20 +10,17 @@ const stats = [
 ];
 
 const HeroSection = () => {
+  const { handleNavClick } = useAppNavigation();
 
   const handleEnrollClick = () => {
-
     // prevent popup from appearing
     sessionStorage.setItem("enrollClicked", "true");
-
-    const section = document.getElementById("contact");
-
-    if (section) {
-      section.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
+    handleNavClick({
+      id: "contact",
+      label: "Contact",
+      type: "section",
+      target: "contact",
+    });
   };
 
   return (
@@ -68,18 +66,25 @@ const HeroSection = () => {
               <Button
                 onClick={handleEnrollClick}
                 size="lg"
-                className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-bold text-base px-8 rounded-xl shadow-lg shadow-secondary/20"
+                className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-bold text-base px-8 rounded-xl shadow-lg shadow-secondary/20 cursor-pointer"
               >
                 Enroll Now
               </Button>
 
               <Button
-                asChild
                 variant="outline"
                 size="lg"
-                className="font-semibold text-base px-8 rounded-xl border-primary/20 hover:bg-primary/5"
+                onClick={() =>
+                  handleNavClick({
+                    id: "programs",
+                    label: "Programs",
+                    type: "section",
+                    target: "programs",
+                  })
+                }
+                className="font-semibold text-base px-8 rounded-xl border-primary/20 hover:bg-primary/5 cursor-pointer"
               >
-                <a href="#programs">Explore Programs</a>
+                Explore Programs
               </Button>
 
               <div className="mt-8">

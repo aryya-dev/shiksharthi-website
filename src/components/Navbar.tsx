@@ -1,26 +1,27 @@
 import { useState, useEffect } from "react";
-import { Menu, X, GraduationCap } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-
-
-const navLinks = [
-  { label: "About", href: "#about" },
-  { label: "Programs", href: "#programs" },
-  { label: "Achievers", href: "#achievers" },
-  { label: "Testimonials", href: "#testimonials" },
-  { label: "Contact", href: "#contact" },
-];
+import { useAppNavigation } from "@/hooks/useAppNavigation";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { navItems, handleNavClick, isNavItemActive } = useAppNavigation();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const contactNavItem = navItems.find((item) => item.id === "contact") || {
+    id: "contact",
+    label: "Contact",
+    type: "section" as const,
+    target: "contact",
+  };
 
   return (
     <nav
@@ -31,48 +32,57 @@ const Navbar = () => {
       }`}
     >
       <div className="container mx-auto flex items-center justify-between px-6">
-
         {/* Logo */}
-       <a href="/" className="flex items-center group">
-  <div className="bg-white px-3 py-1.5 rounded-xl border border-[#eab308]/70 shadow-sm 
-                  transition-all duration-300 ease-out
-                  group-hover:shadow-lg group-hover:-translate-y-0.5 group-hover:border-[#eab308]">
-    <img
-      src="/shiksharthi-logo.jpg"
-      alt="Shiksharthi Institute"
-      className="h-9 w-auto object-contain"
-    />
-  </div>
-</a>
+        <Link to="/" className="flex items-center group">
+          <div
+            className="bg-white px-3 py-1.5 rounded-xl border border-[#eab308]/70 shadow-sm
+                       transition-all duration-300 ease-out
+                       group-hover:shadow-lg group-hover:-translate-y-0.5 group-hover:border-[#eab308]"
+          >
+            <img
+              src="/shiksharthi-logo.jpg"
+              alt="Shiksharthi Institute"
+              className="h-9 w-auto object-contain"
+            />
+          </div>
+        </Link>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-10">
-
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="relative text-sm font-medium text-slate-600 hover:text-[#142850] transition-colors duration-200 group"
-            >
-              {link.label}
-
-              {/* Hover underline animation */}
-              <span className="absolute left-0 -bottom-1 h-[2px] w-0 bg-[#eab308] transition-all duration-300 group-hover:w-full"></span>
-            </a>
-          ))}
+          {navItems.map((item) => {
+            const active = isNavItemActive(item);
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => handleNavClick(item)}
+                className={`relative text-sm font-medium transition-colors duration-200 group cursor-pointer ${
+                  active ? "text-[#142850] font-semibold" : "text-slate-600 hover:text-[#142850]"
+                }`}
+              >
+                {item.label}
+                <span
+                  className={`absolute left-0 -bottom-1 h-[2px] bg-[#eab308] transition-all duration-300 ${
+                    active ? "w-full" : "w-0 group-hover:w-full"
+                  }`}
+                />
+              </button>
+            );
+          })}
 
           <Button
-            asChild
             size="sm"
-            className="bg-[#eab308] hover:bg-[#d4a307] text-black font-semibold rounded-xl px-5 py-2 shadow-sm hover:shadow-md transition-all duration-300"
+            onClick={() => handleNavClick(contactNavItem)}
+            className="bg-[#eab308] hover:bg-[#d4a307] text-black font-semibold rounded-xl px-5 py-2 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer"
           >
-            <a href="#contact">Enroll Now</a>
+            Enroll Now
           </Button>
-
         </div>
 
         {/* Mobile Toggle */}
         <button
+          type="button"
+          aria-label="Toggle Menu"
           className="md:hidden text-[#142850]"
           onClick={() => setMenuOpen(!menuOpen)}
         >
@@ -84,28 +94,24 @@ const Navbar = () => {
       {menuOpen && (
         <div className="md:hidden bg-white border-t border-slate-200 shadow-lg">
           <div className="container mx-auto px-6 py-6 flex flex-col gap-5">
-
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setMenuOpen(false)}
-                className="text-base font-medium text-slate-700 hover:text-[#142850] transition-colors duration-200"
+            {navItems.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => handleNavClick(item, () => setMenuOpen(false))}
+                className="text-left text-base font-medium text-slate-700 hover:text-[#142850] transition-colors duration-200 cursor-pointer"
               >
-                {link.label}
-              </a>
+                {item.label}
+              </button>
             ))}
 
             <Button
-              asChild
               size="sm"
-              className="bg-[#eab308] hover:bg-[#d4a307] text-black font-semibold rounded-xl w-full py-3 shadow-sm"
+              onClick={() => handleNavClick(contactNavItem, () => setMenuOpen(false))}
+              className="bg-[#eab308] hover:bg-[#d4a307] text-black font-semibold rounded-xl w-full py-3 shadow-sm cursor-pointer"
             >
-              <a href="#contact" onClick={() => setMenuOpen(false)}>
-                Enroll Now
-              </a>
+              Enroll Now
             </Button>
-
           </div>
         </div>
       )}

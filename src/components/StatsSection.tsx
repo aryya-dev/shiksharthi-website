@@ -2,10 +2,10 @@ import CountUp from "react-countup";
 import { useInView } from "react-intersection-observer";
 
 const stats = [
-  { number: 3500, suffix: "+", label: "Students" },
+  { number: 5000, suffix: "+", label: "Students" },
   { number: 4, label: "Courses" },
   { number: 36, label: "Teachers" },
-  { number: 9, label: "Mentors" },
+  { number: 10, label: "Mentors" },
 ];
 
 export default function StatsSection() {

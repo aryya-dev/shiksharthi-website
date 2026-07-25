@@ -4,6 +4,7 @@ import ProgramsSection from "@/components/ProgramsSection";
 import StatsSection from "@/components/StatsSection";
 import FromPrincipalsDesk from "@/components/FromPrincipalsDesk";
 import AchieversSection from "@/components/AchieversSection";
+import GallerySection from "@/components/GallerySection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import WhyChooseUsSection from "@/components/WhyChooseUsSection";
 import ContactSection from "@/components/ContactSection";
@@ -19,6 +20,7 @@ const Index = () => {
       <FromPrincipalsDesk />
       <ProgramsSection /> 
       <WhyChooseUsSection />
+      <GallerySection isPreview={true} limitPerCategory={8} showViewAllButton={true} />
       <TestimonialsSection />
       <ContactSection />
       <AdmissionPopup />
