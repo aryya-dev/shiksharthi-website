@@ -24,6 +24,8 @@ const Footer = () => {
       <img
         src="/shiksharthi-logo.jpg"
         alt="Shiksharthi"
+        loading="lazy"
+        decoding="async"
         className="h-16 w-auto object-contain"
       />
     </div>

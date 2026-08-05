@@ -42,6 +42,8 @@ const Navbar = () => {
             <img
               src="/shiksharthi-logo.jpg"
               alt="Shiksharthi Institute"
+              loading="eager"
+              decoding="async"
               className="h-9 w-auto object-contain"
             />
           </div>

@@ -45,7 +45,10 @@ const classroomItems: GalleryItem[] = Array.from(
     id: index + 1,
     category: "our-classrooms",
     type: "image",
-    src: `/gallery/classroom/classroom-${String(index + 1).padStart(3, "0")}.jpg`,
+    src: `/gallery/classroom/classroom-${String(index + 1).padStart(
+      3,
+      "0"
+    )}.jpg`,
     title: `Classroom Session ${index + 1}`,
     description:
       "Interactive classroom sessions at Shiksharthi Academic Institute.",
@@ -76,10 +79,24 @@ const celebrationItems: GalleryItem[] = Array.from(
 
 // =========================
 // ANNUAL FUNCTION
-// (Currently Empty)
 // =========================
 
-const annualFunctionItems: GalleryItem[] = [];
+const annualFunctionItems: GalleryItem[] = Array.from(
+  { length: 66 },
+  (_, index) => ({
+    id: 200 + index + 1,
+    category: "annual-function",
+    type: "image",
+    src: `/gallery/function/annual-function-${String(index + 1).padStart(
+      3,
+      "0"
+    )}.png`,
+    title: `Annual Function ${index + 1}`,
+    description:
+      "Highlights from the Annual Function at Shiksharthi Academic Institute.",
+    aspectRatio: "landscape",
+  })
+);
 
 // =========================
 // EXPORT
