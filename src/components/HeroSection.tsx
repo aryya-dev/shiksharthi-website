@@ -87,20 +87,6 @@ const HeroSection = () => {
                 Explore Programs
               </Button>
 
-              <div className="mt-8">
-                {false && (
-                  <p className="text-sm text-slate-600 mt-6">
-                    Already enrolled?{" "}
-                    <a
-                      href="/portal"
-                      className="font-semibold text-[#142850] hover:underline"
-                    >
-                      Access Student Portal
-                    </a>
-                  </p>
-                )}
-              </div>
-
             </div>
 
             {/* Trust badges */}

@@ -13,6 +13,7 @@ import PortalLayout from "./layouts/PortalLayout";
 import Index from "./pages/Index";
 import AchieversPage from "./pages/AchieversPage";
 import GalleryPage from "./pages/GalleryPage";
+import SSATPage from "./pages/SSATPage";
 import NotFound from "./pages/NotFound";
 
 // 🔐 Portal Core
@@ -50,6 +51,7 @@ function App() {
               <Route path="/" element={<Index />} />
               <Route path="/achievers" element={<AchieversPage />} />
               <Route path="/gallery" element={<GalleryPage />} />
+              <Route path="/ssat" element={<SSATPage />} />
             </Route>
 
             {/* ================= LOGIN PAGE ================= */}

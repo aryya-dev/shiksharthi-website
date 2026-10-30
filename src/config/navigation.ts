@@ -39,6 +39,12 @@ export const NAV_ITEMS: NavItem[] = [
     target: "testimonials",
   },
   {
+    id: "ssat",
+    label: "SSAT 2026",
+    type: "page",
+    target: "/ssat",
+  },
+  {
     id: "contact",
     label: "Contact",
     type: "section",
