@@ -91,6 +91,9 @@ const SSATRegistration = () => {
     studentName: string;
     schoolName: string;
     board: string;
+    studentMobile: string;
+    parentMobile: string;
+    email: string;
     examDate: string;
   } | null>(null);
   const [copied, setCopied] = useState(false);
@@ -139,17 +142,26 @@ const SSATRegistration = () => {
     }
 
     setSubmitting(true);
-    // Simulate async submission
-    await new Promise((r) => setTimeout(r, 1200));
+    await new Promise((r) => setTimeout(r, 600));
+
     const regId = generateRegistrationId();
+
     setSuccess({
       regId,
       studentName: form.studentName,
       schoolName: form.schoolName,
       board: form.board,
+      studentMobile: form.studentMobile,
+      parentMobile: form.parentMobile,
+      email: form.email,
       examDate: form.examDate as string,
     });
     setSubmitting(false);
+
+    // Scroll smoothly to confirmation slip
+    setTimeout(() => {
+      document.getElementById("ssat-register")?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
   };
 
   const copyRegId = () => {
@@ -254,6 +266,12 @@ const SSATRegistration = () => {
                   <span className="text-xs text-slate-500 font-medium">Exam Timing</span>
                   <span className="font-semibold text-slate-800 text-right">11:00 AM – 1:00 PM</span>
                 </div>
+                <div className="flex justify-between items-center py-2.5 px-4 bg-slate-50/60">
+                  <span className="text-xs text-slate-500 font-medium">Registered Contact</span>
+                  <span className="font-semibold text-slate-800 text-right">
+                    {success.studentMobile}
+                  </span>
+                </div>
                 <div className="flex justify-between items-center py-2.5 px-4">
                   <span className="text-xs text-slate-500 font-medium">Mode & Venue</span>
                   <span className="font-semibold text-[#142850] text-right">
@@ -266,7 +284,7 @@ const SSATRegistration = () => {
               <div className="flex items-start gap-3 p-3.5 bg-blue-50/80 border border-blue-100 rounded-xl text-xs text-slate-700 leading-relaxed">
                 <ShieldCheck size={18} className="text-[#142850] shrink-0 mt-0.5" />
                 <span>
-                  Please arrive at the examination venue at least <strong>30 minutes</strong> before 11:00 AM. Bring a printed or digital copy of this Registration ID along with your school ID card.
+                  Your registration is recorded. Please arrive at the examination venue at least <strong>30 minutes</strong> before 11:00 AM. Bring a printed or digital copy of this Registration ID along with your school ID card.
                 </span>
               </div>
 
@@ -605,7 +623,8 @@ const SSATRegistration = () => {
 
             {/* SECTION 4: DECLARATION & CONSENT */}
             <div id="ssat-field-consent" className="pt-2">
-              <div
+              <label
+                htmlFor="ssat-consent-checkbox"
                 onClick={() => handleChange("consent", !form.consent)}
                 className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer select-none flex items-start gap-3 ${form.consent
                     ? "bg-amber-50/50 border-amber-300/80"
@@ -614,6 +633,13 @@ const SSATRegistration = () => {
                       : "bg-slate-50/60 border-slate-200 hover:bg-slate-100/50"
                   }`}
               >
+                <input
+                  type="checkbox"
+                  id="ssat-consent-checkbox"
+                  checked={form.consent}
+                  onChange={(e) => handleChange("consent", e.target.checked)}
+                  className="sr-only"
+                />
                 <div
                   className={`mt-0.5 w-5 h-5 rounded-md border-2 shrink-0 flex items-center justify-center transition-all ${form.consent
                       ? "bg-[#eab308] border-[#eab308]"
@@ -627,15 +653,10 @@ const SSATRegistration = () => {
                 <div className="text-xs sm:text-sm text-slate-700 leading-relaxed">
                   I confirm that I am a <strong>Class 10 Science student</strong> preparing for Class 11 admission. I agree to adhere to all SSAT examination guidelines and understand that scholarship allocation is strictly merit-based.
                 </div>
-              </div>
+              </label>
               {errors.consent && (
                 <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.consent}</p>
               )}
-            </div>
-
-            {/* PRIVACY & INSTITUTION DISCLAIMER */}
-            <div className="text-[11px] text-slate-400 leading-relaxed border-t border-slate-100 pt-3">
-              🔒 <strong>Privacy Assurance:</strong> Student and parent contact information is strictly preserved for SSAT examination updates and admit card verification by Shiksharthi Educational Institute.
             </div>
 
             {/* SUBMIT BUTTON */}

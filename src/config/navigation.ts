@@ -40,7 +40,7 @@ export const NAV_ITEMS: NavItem[] = [
   },
   {
     id: "ssat",
-    label: "SSAT 2026",
+    label: "SSAT",
     type: "page",
     target: "/ssat",
   },

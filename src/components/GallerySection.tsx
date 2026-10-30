@@ -24,7 +24,7 @@ const breakpointColumnsObj = {
   1280: 3,
   768: 2,
   640: 2,
-  480: 1,
+  480: 2,
 };
 
 export interface GallerySectionProps {
@@ -65,7 +65,7 @@ const GalleryCard = React.memo(function GalleryCard({
   const imageSrc = item.type === "video" ? item.thumbnail || item.src : item.src;
 
   return (
-    <motion.div variants={cardVariants} className="mb-4">
+    <motion.div variants={cardVariants} className="mb-2.5 sm:mb-4">
       <div
         onClick={() => onOpenLightbox(index)}
         tabIndex={0}
@@ -331,22 +331,22 @@ export default function GallerySection({
         </div>
 
         {/* Category Tabs */}
-        <div className="flex justify-center mb-10 sm:mb-14">
-          <div className="bg-slate-100/90 p-1.5 rounded-full border border-slate-200/70 shadow-inner flex flex-wrap justify-center gap-1 max-w-full">
+        <div className="flex justify-center mb-8 sm:mb-14 px-1">
+          <div className="w-full max-w-lg sm:max-w-none bg-slate-100/90 p-1.5 rounded-2xl sm:rounded-full border border-slate-200/70 shadow-inner flex flex-nowrap sm:flex-wrap items-center justify-start sm:justify-center gap-1 sm:gap-1.5 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {GALLERY_CATEGORIES.map((tab) => {
               const isActive = activeCategory === tab.id;
               return (
                 <button
                   key={tab.id}
                   onClick={() => handleCategoryChange(tab.id)}
-                  className={`relative px-4 sm:px-6 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#142850]/20 ${
+                  className={`relative flex-1 shrink-0 sm:flex-initial px-3.5 sm:px-6 py-2.5 rounded-xl sm:rounded-full text-xs sm:text-sm font-semibold transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#142850]/20 whitespace-nowrap text-center ${
                     isActive ? "text-white" : "text-slate-600 hover:text-[#142850]"
                   }`}
                 >
                   {isActive && (
                     <motion.div
                       layoutId="activeGalleryTab"
-                      className="absolute inset-0 bg-[#142850] rounded-full shadow-md shadow-[#142850]/20"
+                      className="absolute inset-0 bg-[#142850] rounded-xl sm:rounded-full shadow-md shadow-[#142850]/20"
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
                   )}
@@ -368,8 +368,8 @@ export default function GallerySection({
           >
             <Masonry
               breakpointCols={breakpointColumnsObj}
-              className="flex -ml-4 w-auto"
-              columnClassName="pl-4 bg-clip-padding"
+              className="flex -ml-2.5 sm:-ml-4 w-auto"
+              columnClassName="pl-2.5 sm:pl-4 bg-clip-padding"
             >
               {displayItems.map((item, index) => (
                 <GalleryCard

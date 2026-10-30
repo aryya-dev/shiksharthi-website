@@ -1,13 +1,17 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAppNavigation } from "@/hooks/useAppNavigation";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { navItems, handleNavClick, isNavItemActive } = useAppNavigation();
+  const location = useLocation();
+
+  // Pages that need a solid white navbar from the start (dark hero backgrounds)
+  const forceWhite = location.pathname !== "/";
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -23,10 +27,12 @@ const Navbar = () => {
     target: "contact",
   };
 
+  const showSolid = forceWhite || scrolled;
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
+        showSolid
           ? "bg-white/95 backdrop-blur-md shadow-md py-3"
           : "bg-transparent py-5"
       }`}
