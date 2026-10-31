@@ -8,6 +8,7 @@ import {
   seedSampleRegistrations,
   SSATRegistrationRecord,
 } from "@/lib/ssatDatabase";
+import { printAdmitCardDocument } from "@/lib/admitCardPrint";
 import {
   getFirebaseConfig,
   saveFirebaseConfig,
@@ -710,6 +711,13 @@ const AdminPage = () => {
                         <td className="py-3 px-4 text-right whitespace-nowrap">
                           <div className="flex items-center justify-end gap-1.5">
                             <button
+                              onClick={() => printAdmitCardDocument(record)}
+                              className="p-1.5 text-slate-600 dark:text-slate-300 hover:text-primary hover:bg-primary/10 rounded-md transition-colors"
+                              title="Print 1-Page Official Admit Card (PDF)"
+                            >
+                              <Printer className="w-4 h-4" />
+                            </button>
+                            <button
                               onClick={() => setSelectedRecord(record)}
                               className="p-1.5 text-slate-600 dark:text-slate-300 hover:text-primary hover:bg-primary/10 rounded-md transition-colors"
                               title="View full application dossier"
@@ -856,12 +864,12 @@ const AdminPage = () => {
             <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-800 no-print">
               <button
                 onClick={() => {
-                  window.print();
+                  printAdmitCardDocument(selectedRecord);
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-[#142850] hover:bg-[#0f1f3d] rounded-lg transition-colors shadow-xs"
+                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-[#142850] hover:bg-[#0f1f3d] rounded-lg transition-colors shadow-xs cursor-pointer"
               >
                 <Printer className="w-3.5 h-3.5" />
-                Print Admit Card (1 Page)
+                Print Admit Card (1 Page PDF)
               </button>
               <div className="flex items-center gap-2">
                 <button
@@ -876,126 +884,6 @@ const AdminPage = () => {
                 >
                   Done
                 </button>
-              </div>
-            </div>
-
-            {/* Hidden from screen, printed as official 1-page Admit Card */}
-            <div
-              id="ssat-admit-card"
-              className="hidden print:block bg-white text-slate-900 border-2 border-slate-900 rounded-lg p-5"
-            >
-              <header className="border-b-2 border-slate-900 pb-3 text-center">
-                <div className="flex justify-center mb-1">
-                  <img
-                    src="/shiksharthi-logo.jpg"
-                    alt="Shiksharthi Logo"
-                    className="h-14 w-auto object-contain max-w-[280px]"
-                  />
-                </div>
-                <h1 className="text-xl font-extrabold tracking-tight text-[#142850] uppercase">
-                  Shiksharthi Educational Institute
-                </h1>
-                <p className="text-[11px] font-medium text-slate-600 tracking-wide mt-0.5">
-                  Premier Institute for IIT-JEE, NEET & Foundation | Kolkata, West Bengal
-                </p>
-                <div className="mt-2 bg-[#142850] text-white py-1 px-3 rounded inline-block">
-                  <span className="text-xs font-bold tracking-wider uppercase block">
-                    SHIKSHARTHI SCHOLARSHIP ADMISSION TEST (SSAT 2026)
-                  </span>
-                  <span className="text-[10px] font-medium tracking-widest uppercase text-amber-300 block">
-                    ★ OFFICIAL HALL TICKET & ADMIT CARD ★
-                  </span>
-                </div>
-              </header>
-
-              <div className="my-2 py-1 px-3 bg-slate-50 border border-slate-300 rounded flex justify-between text-xs">
-                <span>Roll No: <strong className="font-mono text-sm">{selectedRecord.regId}</strong></span>
-                <span>Class: <strong>10 (Science)</strong></span>
-                <span>Category: <strong>Scholarship Exam</strong></span>
-              </div>
-
-              <div className="grid grid-cols-12 gap-3 my-2 text-xs">
-                <div className="col-span-9 border border-slate-300 rounded overflow-hidden">
-                  <table className="w-full text-left border-collapse text-xs">
-                    <tbody>
-                      <tr className="border-b border-slate-200">
-                        <td className="py-1 px-2.5 font-bold text-slate-500 bg-slate-50 w-1/3">Candidate Name</td>
-                        <td className="py-1 px-2.5 font-extrabold text-[#142850] uppercase">{selectedRecord.studentName}</td>
-                      </tr>
-                      <tr className="border-b border-slate-200">
-                        <td className="py-1 px-2.5 font-bold text-slate-500 bg-slate-50">School & Board</td>
-                        <td className="py-1 px-2.5 font-semibold">{selectedRecord.schoolName} ({selectedRecord.board})</td>
-                      </tr>
-                      <tr className="border-b border-slate-200">
-                        <td className="py-1 px-2.5 font-bold text-slate-500 bg-slate-50">Student Mobile</td>
-                        <td className="py-1 px-2.5 font-mono">+91 {selectedRecord.studentMobile}</td>
-                      </tr>
-                      <tr className="border-b border-slate-200">
-                        <td className="py-1 px-2.5 font-bold text-slate-500 bg-slate-50">Parent Mobile</td>
-                        <td className="py-1 px-2.5 font-mono">+91 {selectedRecord.parentMobile}</td>
-                      </tr>
-                      <tr className="border-b border-slate-200">
-                        <td className="py-1 px-2.5 font-bold text-slate-500 bg-slate-50">Exam Date</td>
-                        <td className="py-1 px-2.5 font-extrabold text-[#142850]">{selectedRecord.examDate}</td>
-                      </tr>
-                      <tr className="border-b border-slate-200">
-                        <td className="py-1 px-2.5 font-bold text-slate-500 bg-slate-50">Reporting Time</td>
-                        <td className="py-1 px-2.5 font-bold text-amber-700">10:30 AM (Sharp)</td>
-                      </tr>
-                      <tr className="border-b border-slate-200">
-                        <td className="py-1 px-2.5 font-bold text-slate-500 bg-slate-50">Exam Timing</td>
-                        <td className="py-1 px-2.5">11:00 AM – 1:00 PM (2 Hours)</td>
-                      </tr>
-                      <tr>
-                        <td className="py-1 px-2.5 font-bold text-slate-500 bg-slate-50">Venue</td>
-                        <td className="py-1 px-2.5">Shiksharthi Educational Institute, Kolkata</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="col-span-3 border border-slate-300 rounded p-1 flex flex-col justify-between items-center text-center bg-slate-50/50">
-                  <div className="w-full h-28 border-2 border-dashed border-slate-300 rounded flex flex-col items-center justify-center p-1 text-[8px] text-slate-400 bg-white">
-                    <span>Affix Recent Passport Photo</span>
-                    <span className="text-[7px] text-slate-300">(Self-Attested)</span>
-                  </div>
-                  <span className="text-[8px] text-slate-400 font-semibold uppercase">Candidate Photo</span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2 my-2 pt-2 border-t border-slate-200 text-center text-[10px]">
-                <div className="border border-slate-200 rounded p-1">
-                  <div className="h-8 border-b border-dashed border-slate-300" />
-                  <span className="font-semibold block mt-1">Candidate's Signature</span>
-                </div>
-                <div className="border border-slate-200 rounded p-1">
-                  <div className="h-8 border-b border-dashed border-slate-300" />
-                  <span className="font-semibold block mt-1">Invigilator's Signature</span>
-                </div>
-                <div className="border border-slate-200 rounded p-1 bg-slate-50/50">
-                  <div className="h-8 flex items-center justify-center border-b border-dashed border-slate-300 text-[9px] font-bold text-emerald-700">
-                    Verified & Authorized
-                  </div>
-                  <span className="font-semibold block mt-1">Controller of Examinations</span>
-                </div>
-              </div>
-
-              <div className="border-t-2 border-slate-900 pt-1.5 mt-2">
-                <h4 className="text-[10px] font-bold uppercase tracking-wider text-[#142850] mb-0.5">
-                  Important Examination Instructions
-                </h4>
-                <ol className="list-decimal list-inside text-[9.5px] text-slate-700 space-y-0.5 leading-tight">
-                  <li>Carry this printed Admit Card along with School ID or Aadhaar Card.</li>
-                  <li>Report to the exam center by <strong>10:30 AM</strong>. No entry permitted after 11:15 AM.</li>
-                  <li>Use Blue or Black ballpoint pens only. Calculators and smartwatches are strictly prohibited.</li>
-                  <li>Top 100 students receive merit scholarships; Top 10 rankers receive ₹1,00,000 scholarship awards.</li>
-                </ol>
-              </div>
-
-              <div className="mt-2 pt-1 border-t border-slate-200 text-center text-[9px] text-slate-500 flex justify-between">
-                <span>Helpline: <strong>+91 90070 63109</strong></span>
-                <span>Email: <strong>info@shiksharthi.org</strong></span>
-                <span>Website: <strong>www.shiksharthi.org</strong></span>
               </div>
             </div>
           </div>

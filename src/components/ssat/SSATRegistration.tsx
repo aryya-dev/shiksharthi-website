@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { addRegistration } from "@/lib/ssatDatabase";
+import { SHIKSHARTHI_LOGO_BASE64 } from "@/lib/admitCardLogo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -230,12 +231,28 @@ const SSATRegistration = () => {
     setSuccess(null);
   };
 
+  const printAdmitCard = () => {
+    if (!success) return;
+    printAdmitCardDocument({
+      regId: success.regId,
+      studentName: success.studentName,
+      schoolName: success.schoolName,
+      board: success.board,
+      studentMobile: success.studentMobile,
+      parentMobile: success.parentMobile,
+      email: success.email,
+      examDate: success.examDate,
+      consent: true,
+      registeredAt: new Date().toISOString(),
+    });
+  };
+
   // SUCCESS ADMIT CARD SCREEN
   if (success) {
     return (
       <section id="ssat-register" className="py-8 sm:py-14 bg-slate-100 dark:bg-slate-950 min-h-screen">
         <div className="max-w-3xl mx-auto px-3 sm:px-6">
-          {/* Top Control Bar (Screen Only - Hidden in Print) */}
+          {/* Top Control Bar (Screen Only) */}
           <div className="no-print bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
@@ -254,7 +271,7 @@ const SSATRegistration = () => {
             <div className="flex items-center gap-2.5 w-full sm:w-auto">
               <Button
                 type="button"
-                onClick={() => window.print()}
+                onClick={printAdmitCard}
                 className="flex-1 sm:flex-none bg-[#142850] hover:bg-[#0f1f3d] text-white font-semibold rounded-xl px-4 py-2 text-xs shadow-md cursor-pointer flex items-center gap-2"
               >
                 <Printer size={15} />
@@ -272,7 +289,7 @@ const SSATRegistration = () => {
           </div>
 
           {/* =========================================================================
-              THE OFFICIAL 1-PAGE ADMIT CARD (PRINTED & SCREEN DISPLAY)
+              THE OFFICIAL 1-PAGE ADMIT CARD (ON-SCREEN DISPLAY)
              ========================================================================= */}
           <div
             id="ssat-admit-card"
@@ -291,10 +308,10 @@ const SSATRegistration = () => {
 
             {/* Header Section */}
             <header className="border-b-2 border-slate-900 pb-3 text-center relative">
-              {/* Logo */}
+              {/* Logo with base64 embedded data so it always renders */}
               <div className="flex justify-center mb-1">
                 <img
-                  src="/shiksharthi-logo.jpg"
+                  src={SHIKSHARTHI_LOGO_BASE64}
                   alt="Shiksharthi Logo"
                   className="h-14 sm:h-16 w-auto object-contain max-w-[280px]"
                 />
@@ -454,8 +471,8 @@ const SSATRegistration = () => {
 
             {/* Footer Helpline */}
             <div className="mt-2.5 pt-1.5 border-t border-slate-200 text-center text-[9px] text-slate-500 flex flex-wrap items-center justify-between gap-1">
-              <span>Helpline: <strong>+91 90070 63109</strong></span>
-              <span>Email: <strong>info@shiksharthi.org</strong></span>
+              <span>Helpline: <strong>+91 9836269291</strong></span>
+              <span>Email: <strong>shiksharthi.edu.institute@gmail.com</strong></span>
               <span>Website: <strong>www.shiksharthi.org</strong></span>
               <span className="text-slate-400 italic">Valid only for SSAT 2026 Examination</span>
             </div>
@@ -529,11 +546,10 @@ const SSATRegistration = () => {
                   <div key={section.id} className="flex items-center flex-1 last:flex-none">
                     <div className="flex flex-col items-center gap-1.5">
                       <div
-                        className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all duration-300 ${
-                          isComplete
+                        className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all duration-300 ${isComplete
                             ? "bg-emerald-500 text-white shadow-md shadow-emerald-500/25"
                             : "bg-slate-100 text-slate-400 border border-slate-200"
-                        }`}
+                          }`}
                       >
                         {isComplete ? (
                           <Check size={14} className="stroke-[3]" />
@@ -542,9 +558,8 @@ const SSATRegistration = () => {
                         )}
                       </div>
                       <span
-                        className={`text-[10px] sm:text-[11px] font-semibold tracking-wide transition-colors ${
-                          isComplete ? "text-emerald-600" : "text-slate-400"
-                        }`}
+                        className={`text-[10px] sm:text-[11px] font-semibold tracking-wide transition-colors ${isComplete ? "text-emerald-600" : "text-slate-400"
+                          }`}
                       >
                         {section.label}
                       </span>
@@ -553,9 +568,8 @@ const SSATRegistration = () => {
                       <div className="flex-1 mx-2 sm:mx-3 mb-5">
                         <div className="h-[2px] rounded-full bg-slate-100 overflow-hidden">
                           <div
-                            className={`h-full rounded-full transition-all duration-500 ease-out ${
-                              isComplete ? "bg-emerald-400 w-full" : "bg-transparent w-0"
-                            }`}
+                            className={`h-full rounded-full transition-all duration-500 ease-out ${isComplete ? "bg-emerald-400 w-full" : "bg-transparent w-0"
+                              }`}
                           />
                         </div>
                       </div>
@@ -607,9 +621,8 @@ const SSATRegistration = () => {
                     placeholder="Enter student's full name"
                     value={form.studentName}
                     onChange={(e) => handleChange("studentName", e.target.value)}
-                    className={`pl-10 h-11 sm:h-12 rounded-xl text-sm sm:text-base bg-slate-50/60 border-slate-200 focus:bg-white focus:border-[#eab308] focus:ring-[#eab308]/20 transition-all ${
-                      errors.studentName ? "border-red-400 focus-visible:ring-red-400" : ""
-                    }`}
+                    className={`pl-10 h-11 sm:h-12 rounded-xl text-sm sm:text-base bg-slate-50/60 border-slate-200 focus:bg-white focus:border-[#eab308] focus:ring-[#eab308]/20 transition-all ${errors.studentName ? "border-red-400 focus-visible:ring-red-400" : ""
+                      }`}
                   />
                 </div>
                 {errors.studentName && (
@@ -638,9 +651,8 @@ const SSATRegistration = () => {
                       placeholder="E.g. St. Xavier's Collegiate School"
                       value={form.schoolName}
                       onChange={(e) => handleChange("schoolName", e.target.value)}
-                      className={`pl-10 h-11 sm:h-12 rounded-xl text-sm sm:text-base bg-slate-50/60 border-slate-200 focus:bg-white focus:border-[#eab308] focus:ring-[#eab308]/20 transition-all ${
-                        errors.schoolName ? "border-red-400 focus-visible:ring-red-400" : ""
-                      }`}
+                      className={`pl-10 h-11 sm:h-12 rounded-xl text-sm sm:text-base bg-slate-50/60 border-slate-200 focus:bg-white focus:border-[#eab308] focus:ring-[#eab308]/20 transition-all ${errors.schoolName ? "border-red-400 focus-visible:ring-red-400" : ""
+                        }`}
                     />
                   </div>
                   {errors.schoolName && (
@@ -663,9 +675,8 @@ const SSATRegistration = () => {
                       id="ssat-input-board"
                       value={form.board}
                       onChange={(e) => handleChange("board", e.target.value as Board)}
-                      className={`w-full h-11 sm:h-12 pl-3.5 pr-8 rounded-xl text-sm sm:text-base bg-slate-50/60 border text-slate-800 outline-none transition-all appearance-none cursor-pointer focus:bg-white focus:ring-2 focus:ring-[#eab308]/30 focus:border-[#eab308] ${
-                        errors.board ? "border-red-400" : "border-slate-200"
-                      }`}
+                      className={`w-full h-11 sm:h-12 pl-3.5 pr-8 rounded-xl text-sm sm:text-base bg-slate-50/60 border text-slate-800 outline-none transition-all appearance-none cursor-pointer focus:bg-white focus:ring-2 focus:ring-[#eab308]/30 focus:border-[#eab308] ${errors.board ? "border-red-400" : "border-slate-200"
+                        }`}
                     >
                       <option value="">Select</option>
                       {BOARDS.map((b) => (
@@ -727,9 +738,8 @@ const SSATRegistration = () => {
                       onChange={(e) =>
                         handleChange("studentMobile", e.target.value.replace(/\D/g, ""))
                       }
-                      className={`pl-14 h-11 sm:h-12 rounded-xl text-sm sm:text-base bg-slate-50/60 border-slate-200 focus:bg-white focus:border-[#eab308] focus:ring-[#eab308]/20 tracking-wide transition-all ${
-                        errors.studentMobile ? "border-red-400 focus-visible:ring-red-400" : ""
-                      }`}
+                      className={`pl-14 h-11 sm:h-12 rounded-xl text-sm sm:text-base bg-slate-50/60 border-slate-200 focus:bg-white focus:border-[#eab308] focus:ring-[#eab308]/20 tracking-wide transition-all ${errors.studentMobile ? "border-red-400 focus-visible:ring-red-400" : ""
+                        }`}
                     />
                     {form.studentMobile.length === 10 && validateMobile(form.studentMobile) && (
                       <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
@@ -770,9 +780,8 @@ const SSATRegistration = () => {
                       onChange={(e) =>
                         handleChange("parentMobile", e.target.value.replace(/\D/g, ""))
                       }
-                      className={`pl-14 h-11 sm:h-12 rounded-xl text-sm sm:text-base bg-slate-50/60 border-slate-200 focus:bg-white focus:border-[#eab308] focus:ring-[#eab308]/20 tracking-wide transition-all ${
-                        errors.parentMobile ? "border-red-400 focus-visible:ring-red-400" : ""
-                      }`}
+                      className={`pl-14 h-11 sm:h-12 rounded-xl text-sm sm:text-base bg-slate-50/60 border-slate-200 focus:bg-white focus:border-[#eab308] focus:ring-[#eab308]/20 tracking-wide transition-all ${errors.parentMobile ? "border-red-400 focus-visible:ring-red-400" : ""
+                        }`}
                     />
                     {form.parentMobile.length === 10 && validateMobile(form.parentMobile) && (
                       <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
@@ -808,9 +817,8 @@ const SSATRegistration = () => {
                     placeholder="student@example.com"
                     value={form.email}
                     onChange={(e) => handleChange("email", e.target.value)}
-                    className={`pl-10 h-11 sm:h-12 rounded-xl text-sm sm:text-base bg-slate-50/60 border-slate-200 focus:bg-white focus:border-[#eab308] focus:ring-[#eab308]/20 transition-all ${
-                      errors.email ? "border-red-400 focus-visible:ring-red-400" : ""
-                    }`}
+                    className={`pl-10 h-11 sm:h-12 rounded-xl text-sm sm:text-base bg-slate-50/60 border-slate-200 focus:bg-white focus:border-[#eab308] focus:ring-[#eab308]/20 transition-all ${errors.email ? "border-red-400 focus-visible:ring-red-400" : ""
+                      }`}
                   />
                 </div>
                 {errors.email && (
@@ -850,39 +858,35 @@ const SSATRegistration = () => {
                       key={item.date}
                       id={`ssat-date-btn-${item.date.replace(/\s/g, "-")}`}
                       onClick={() => handleChange("examDate", item.date)}
-                      className={`relative p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 cursor-pointer transition-all duration-200 select-none group ${
-                        isSelected
+                      className={`relative p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 cursor-pointer transition-all duration-200 select-none group ${isSelected
                           ? "border-[#eab308] bg-gradient-to-br from-amber-500/5 to-amber-400/10 shadow-lg shadow-amber-500/10 ring-1 ring-[#eab308]/40"
                           : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50 hover:shadow-md"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex items-center gap-2">
                           <span
-                            className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
-                              isSelected
+                            className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${isSelected
                                 ? "bg-[#142850] text-[#eab308]"
                                 : "bg-slate-100 text-slate-600"
-                            }`}
+                              }`}
                           >
                             {item.badge}
                           </span>
                           <span
-                            className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                              item.seats === "Filling Fast"
+                            className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${item.seats === "Filling Fast"
                                 ? "bg-orange-100 text-orange-700"
                                 : "bg-emerald-50 text-emerald-700"
-                            }`}
+                              }`}
                           >
                             {item.seats}
                           </span>
                         </div>
                         <div
-                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                            isSelected
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${isSelected
                               ? "border-[#eab308] bg-[#eab308] scale-110"
                               : "border-slate-300 bg-white group-hover:border-slate-400"
-                          }`}
+                            }`}
                         >
                           {isSelected && <Check size={12} className="text-slate-900 stroke-[3]" />}
                         </div>
@@ -949,22 +953,20 @@ const SSATRegistration = () => {
                     handleChange("consent", !form.consent);
                   }
                 }}
-                className={`p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 transition-all duration-200 cursor-pointer select-none flex items-start gap-3.5 ${
-                  form.consent
+                className={`p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 transition-all duration-200 cursor-pointer select-none flex items-start gap-3.5 ${form.consent
                     ? "bg-emerald-50/50 border-emerald-400/70 shadow-md shadow-emerald-500/10"
                     : errors.consent
                       ? "bg-red-50/40 border-red-300 shadow-sm shadow-red-500/5"
                       : "bg-slate-50/60 border-slate-200 hover:bg-slate-100/50 hover:border-slate-300"
-                }`}
+                  }`}
               >
                 <div
-                  className={`mt-0.5 w-6 h-6 rounded-lg border-2 shrink-0 flex items-center justify-center transition-all duration-200 ${
-                    form.consent
+                  className={`mt-0.5 w-6 h-6 rounded-lg border-2 shrink-0 flex items-center justify-center transition-all duration-200 ${form.consent
                       ? "bg-emerald-500 border-emerald-500 scale-105"
                       : errors.consent
                         ? "border-red-400 bg-white"
                         : "border-slate-300 bg-white"
-                  }`}
+                    }`}
                 >
                   {form.consent && <Check size={14} className="text-white stroke-[3]" />}
                 </div>
@@ -991,11 +993,10 @@ const SSATRegistration = () => {
                 id="ssat-submit-btn"
                 type="submit"
                 disabled={submitting}
-                className={`w-full h-12 sm:h-14 text-sm sm:text-base font-bold rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all cursor-pointer border-0 ${
-                  completedCount === 4
+                className={`w-full h-12 sm:h-14 text-sm sm:text-base font-bold rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all cursor-pointer border-0 ${completedCount === 4
                     ? "text-slate-950 bg-gradient-to-r from-[#eab308] via-amber-400 to-[#d4a307] hover:brightness-105 active:scale-[0.99]"
                     : "text-slate-950 bg-gradient-to-r from-[#eab308] via-amber-400 to-[#d4a307] hover:brightness-105 active:scale-[0.99]"
-                }`}
+                  }`}
               >
                 {submitting ? (
                   <span className="flex items-center justify-center gap-2">
