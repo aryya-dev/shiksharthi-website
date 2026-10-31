@@ -373,12 +373,12 @@ const SSATRegistration = () => {
               </p>
 
               {/* Examination Title Ribbon */}
-              <div className="mt-2.5 bg-[#142850] text-white py-1.5 px-3 rounded-md inline-block max-w-full">
-                <span className="text-[11px] sm:text-xs font-bold tracking-wider uppercase block">
+              <div className="mt-2.5 bg-slate-50 border-1.5 border-[#142850] py-1.5 px-4 rounded-md inline-block max-w-full text-center">
+                <span className="text-[11px] sm:text-xs font-extrabold tracking-wider uppercase block text-[#142850]">
                   SHIKSHARTHI SCHOLARSHIP ADMISSION TEST (SSAT 2026)
                 </span>
-                <span className="text-[9px] sm:text-[10px] font-medium tracking-widest uppercase text-amber-300 block">
-                  ★ OFFICIAL HALL TICKET & ADMIT CARD ★
+                <span className="text-[9px] sm:text-[10px] font-bold tracking-widest uppercase text-amber-700 block mt-0.5">
+                  ★ OFFICIAL HALL TICKET &amp; ADMIT CARD ★
                 </span>
               </div>
             </header>

@@ -131,25 +131,30 @@ export function buildAdmitCardHTML(record: SSATRegistrationRecord, isStandaloneW
       letter-spacing: 0.4px;
     }
     .exam-badge {
-      background-color: #142850;
-      color: #ffffff;
-      padding: 4px 14px;
+      border: 1.5px solid #142850;
+      background-color: #f8fafc;
+      padding: 5px 16px;
       border-radius: 4px;
       display: inline-block;
-      margin-top: 2px;
+      margin-top: 5px;
+      text-align: center;
     }
     .exam-title {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 800;
+      color: #142850;
       letter-spacing: 0.5px;
       text-transform: uppercase;
+      line-height: 1.3;
     }
     .exam-sub {
-      font-size: 9px;
+      font-size: 9.5px;
       font-weight: 700;
-      color: #fde047;
-      letter-spacing: 1px;
+      color: #b45309;
+      letter-spacing: 0.8px;
       text-transform: uppercase;
+      margin-top: 2px;
+      line-height: 1.2;
     }
     .hall-bar {
       margin: 8px 0;
@@ -437,16 +442,16 @@ export async function downloadAdmitCardPDF(record: SSATRegistrationRecord): Prom
   container.id = "ssat-admit-card-pdf-render";
   container.style.position = "fixed";
   container.style.top = "0";
-  container.style.left = "-9999px";
+  container.style.left = "0";
   container.style.width = "794px";
   container.style.maxWidth = "794px";
   container.style.minWidth = "794px";
   container.style.background = "#ffffff";
   container.style.color = "#0f172a";
-  container.style.zIndex = "-9999";
+  container.style.zIndex = "-99999";
   container.style.boxSizing = "border-box";
   container.style.padding = "16px";
-  container.style.opacity = "1";
+  container.style.opacity = "0.01";
   container.style.pointerEvents = "none";
 
   // Build the clean admit card HTML
@@ -459,9 +464,9 @@ export async function downloadAdmitCardPDF(record: SSATRegistrationRecord): Prom
           <img src="${SHIKSHARTHI_LOGO_BASE64}" style="height: 54px; max-width: 280px; object-fit: contain; display: block; margin: 0 auto 4px auto;" alt="Logo" />
           <h1 style="font-size: 17px; font-weight: 800; color: #142850; text-transform: uppercase; margin: 0; letter-spacing: 0.5px;">Shiksharthi Educational Institute</h1>
           <p style="font-size: 10px; font-weight: 600; color: #475569; margin: 2px 0 6px 0; text-transform: uppercase; letter-spacing: 0.4px;">Premier Institute for IIT-JEE, NEET &amp; Foundation | Kolkata, West Bengal</p>
-          <div style="background-color: #142850; color: #ffffff; padding: 5px 16px; border-radius: 4px; display: inline-block; margin-top: 2px;">
-            <div style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase;">SHIKSHARTHI SCHOLARSHIP ADMISSION TEST (SSAT 2026)</div>
-            <div style="font-size: 9.5px; font-weight: 700; color: #fde047; letter-spacing: 1px; text-transform: uppercase;">★ OFFICIAL PROVISIONAL ADMIT CARD &amp; HALL TICKET ★</div>
+          <div style="margin-top: 5px; border: 1.5px solid #142850; background-color: #f8fafc; padding: 5px 18px; border-radius: 4px; display: inline-block; text-align: center;">
+            <div style="font-size: 12px; font-weight: 800; color: #142850; letter-spacing: 0.5px; text-transform: uppercase; margin: 0; line-height: 1.3;">SHIKSHARTHI SCHOLARSHIP ADMISSION TEST (SSAT 2026)</div>
+            <div style="font-size: 9.5px; font-weight: 700; color: #b45309; letter-spacing: 0.8px; text-transform: uppercase; margin-top: 2px; line-height: 1.2;">★ OFFICIAL PROVISIONAL ADMIT CARD &amp; HALL TICKET ★</div>
           </div>
         </div>
 
