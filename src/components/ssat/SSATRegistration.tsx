@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { addRegistration } from "@/lib/ssatDatabase";
 import { SHIKSHARTHI_LOGO_BASE64 } from "@/lib/admitCardLogo";
+import { printAdmitCardDocument, downloadAdmitCardPDF } from "@/lib/admitCardPrint";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -23,6 +24,7 @@ import {
   AlertCircle,
   Award,
   MapPin,
+  Download,
 } from "lucide-react";
 
 type Board = "ICSE" | "CBSE" | "WBBSE" | "Other" | "";
@@ -231,6 +233,32 @@ const SSATRegistration = () => {
     setSuccess(null);
   };
 
+  const [isSavingPDF, setIsSavingPDF] = useState(false);
+
+  const handleSavePDF = async () => {
+    if (!success) return;
+    setIsSavingPDF(true);
+    try {
+      await downloadAdmitCardPDF({
+        regId: success.regId,
+        studentName: success.studentName,
+        schoolName: success.schoolName,
+        board: success.board,
+        studentMobile: success.studentMobile,
+        parentMobile: success.parentMobile,
+        email: success.email,
+        examDate: success.examDate,
+        consent: true,
+        registeredAt: new Date().toISOString(),
+      });
+    } catch (e) {
+      console.error("PDF auto-download failed:", e);
+      printAdmitCard();
+    } finally {
+      setIsSavingPDF(false);
+    }
+  };
+
   const printAdmitCard = () => {
     if (!success) return;
     printAdmitCardDocument({
@@ -268,20 +296,39 @@ const SSATRegistration = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5 w-full sm:w-auto">
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+              <Button
+                type="button"
+                onClick={handleSavePDF}
+                disabled={isSavingPDF}
+                className="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl px-4 py-2 text-xs shadow-md cursor-pointer flex items-center justify-center gap-2 transition-all active:scale-95"
+              >
+                {isSavingPDF ? (
+                  <>
+                    <Loader2 size={15} className="animate-spin" />
+                    <span>Saving PDF...</span>
+                  </>
+                ) : (
+                  <>
+                    <Download size={15} />
+                    <span>Save as PDF (Auto-Download)</span>
+                  </>
+                )}
+              </Button>
               <Button
                 type="button"
                 onClick={printAdmitCard}
-                className="flex-1 sm:flex-none bg-[#142850] hover:bg-[#0f1f3d] text-white font-semibold rounded-xl px-4 py-2 text-xs shadow-md cursor-pointer flex items-center gap-2"
+                variant="outline"
+                className="flex-1 sm:flex-none border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl px-3 py-2 text-xs cursor-pointer flex items-center justify-center gap-1.5"
               >
                 <Printer size={15} />
-                <span>Print / Save Admit Card (PDF)</span>
+                <span>Print</span>
               </Button>
               <Button
                 type="button"
                 onClick={resetForm}
-                variant="outline"
-                className="flex-1 sm:flex-none border-slate-200 text-slate-700 hover:bg-slate-100 rounded-xl px-3 py-2 text-xs cursor-pointer"
+                variant="ghost"
+                className="text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl px-3 py-2 text-xs cursor-pointer"
               >
                 New Form
               </Button>
@@ -481,7 +528,7 @@ const SSATRegistration = () => {
           {/* Bottom helper tip (Screen Only) */}
           <div className="no-print mt-4 text-center">
             <p className="text-xs text-slate-500">
-              💡 Tip: Click <strong>"Print / Save Admit Card"</strong> above. In the print dialog, select <strong>"Save as PDF"</strong> to save this 1-page admit card on your phone or computer.
+              💡 <strong>Mobile / Phone tip:</strong> Clicking <strong>"Save as PDF"</strong> will automatically download the 1-page official Admit Card directly into your device's Downloads folder.
             </p>
           </div>
         </div>

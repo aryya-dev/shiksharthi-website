@@ -8,7 +8,7 @@ import {
   seedSampleRegistrations,
   SSATRegistrationRecord,
 } from "@/lib/ssatDatabase";
-import { printAdmitCardDocument } from "@/lib/admitCardPrint";
+import { printAdmitCardDocument, downloadAdmitCardPDF } from "@/lib/admitCardPrint";
 import {
   getFirebaseConfig,
   saveFirebaseConfig,
@@ -861,16 +861,25 @@ const AdminPage = () => {
             </div>
 
             {/* Modal Actions */}
-            <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-800 no-print">
-              <button
-                onClick={() => {
-                  printAdmitCardDocument(selectedRecord);
-                }}
-                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-[#142850] hover:bg-[#0f1f3d] rounded-lg transition-colors shadow-xs cursor-pointer"
-              >
-                <Printer className="w-3.5 h-3.5" />
-                Print Admit Card (1 Page PDF)
-              </button>
+            <div className="flex flex-wrap items-center justify-between gap-2.5 pt-3 border-t border-slate-100 dark:border-slate-800 no-print">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => downloadAdmitCardPDF(selectedRecord)}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors shadow-xs cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  Save as PDF (Auto-Download)
+                </button>
+                <button
+                  onClick={() => {
+                    printAdmitCardDocument(selectedRecord);
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors shadow-xs cursor-pointer"
+                >
+                  <Printer className="w-3.5 h-3.5" />
+                  Print
+                </button>
+              </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleDelete(selectedRecord.regId, selectedRecord.studentName)}
