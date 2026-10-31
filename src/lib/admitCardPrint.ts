@@ -442,16 +442,17 @@ export async function downloadAdmitCardPDF(record: SSATRegistrationRecord): Prom
   container.id = "ssat-admit-card-pdf-render";
   container.style.position = "fixed";
   container.style.top = "0";
-  container.style.left = "0";
+  container.style.left = "-9999px";
   container.style.width = "794px";
   container.style.maxWidth = "794px";
   container.style.minWidth = "794px";
   container.style.background = "#ffffff";
   container.style.color = "#0f172a";
-  container.style.zIndex = "-99999";
+  container.style.zIndex = "-9999";
   container.style.boxSizing = "border-box";
   container.style.padding = "16px";
-  container.style.opacity = "0.01";
+  container.style.opacity = "1";
+  container.style.visibility = "visible";
   container.style.pointerEvents = "none";
 
   // Build the clean admit card HTML
