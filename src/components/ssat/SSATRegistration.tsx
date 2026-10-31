@@ -230,127 +230,242 @@ const SSATRegistration = () => {
     setSuccess(null);
   };
 
-  // SUCCESS CONFIRMATION SLIP
+  // SUCCESS ADMIT CARD SCREEN
   if (success) {
     return (
-      <section id="ssat-register" className="py-16 sm:py-24 bg-gradient-to-b from-slate-50 via-gray-100/70 to-slate-50">
-        <div className="max-w-xl mx-auto px-4 sm:px-6">
-          <div className="bg-white border border-slate-200/90 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden transition-all">
-            {/* Top decorative header */}
-            <div className="bg-[#142850] text-white px-6 py-8 text-center relative overflow-hidden">
-              <div className="absolute -right-12 -top-12 w-36 h-36 bg-[#eab308]/15 rounded-full blur-2xl pointer-events-none" />
-              <div className="absolute -left-12 -bottom-12 w-36 h-36 bg-[#eab308]/10 rounded-full blur-2xl pointer-events-none" />
-
-              <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-400/40 mb-3.5">
-                <CheckCircle2 size={30} />
+      <section id="ssat-register" className="py-8 sm:py-14 bg-slate-100 dark:bg-slate-950 min-h-screen">
+        <div className="max-w-3xl mx-auto px-3 sm:px-6">
+          {/* Top Control Bar (Screen Only - Hidden in Print) */}
+          <div className="no-print bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                <CheckCircle2 size={22} />
               </div>
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Registration Confirmed!</h2>
-              <p className="text-white/70 text-xs sm:text-sm mt-1 max-w-sm mx-auto">
-                Shiksharthi Scholarship Admission Test (SSAT 2026)
-              </p>
-            </div>
-
-            {/* Slip content */}
-            <div className="p-6 sm:p-8 space-y-6">
-              {/* Registration ID Banner */}
-              <div className="bg-gradient-to-r from-amber-500/10 via-amber-400/5 to-amber-500/10 border border-amber-300/60 rounded-xl p-4 sm:p-5 text-center">
-                <span className="text-[11px] font-bold tracking-widest uppercase text-amber-800">
-                  Your Official Registration ID
-                </span>
-                <div className="flex items-center justify-center gap-3 mt-1.5">
-                  <span className="text-2xl sm:text-3xl font-extrabold text-[#142850] font-mono tracking-wider">
-                    {success.regId}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={copyRegId}
-                    aria-label="Copy Registration ID"
-                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white border border-amber-300/80 text-xs font-semibold text-slate-700 hover:bg-amber-50 active:scale-95 transition-all shadow-xs cursor-pointer"
-                  >
-                    {copied ? (
-                      <>
-                        <Check size={14} className="text-emerald-600" />
-                        <span className="text-emerald-700 font-bold">Copied</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy size={14} className="text-amber-600" />
-                        <span>Copy</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-                <p className="text-[11px] text-slate-500 mt-2">
-                  Take a screenshot or save this number for exam day admit verification.
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+                  Registration Confirmed!
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Your 1-page Official SSAT Admit Card is ready. Download or print below.
                 </p>
               </div>
+            </div>
 
-              {/* Student details summary */}
-              <div className="rounded-xl border border-slate-200 divide-y divide-slate-100 text-sm">
-                <div className="flex justify-between items-center py-2.5 px-4 bg-slate-50/60">
-                  <span className="text-xs text-slate-500 font-medium">Candidate Name</span>
-                  <span className="font-semibold text-slate-800 text-right">{success.studentName}</span>
-                </div>
-                <div className="flex justify-between items-center py-2.5 px-4">
-                  <span className="text-xs text-slate-500 font-medium">Target Standard</span>
-                  <span className="font-semibold text-slate-800 text-right">Class 10 Science</span>
-                </div>
-                <div className="flex justify-between items-center py-2.5 px-4 bg-slate-50/60">
-                  <span className="text-xs text-slate-500 font-medium">School & Board</span>
-                  <span className="font-semibold text-slate-800 text-right truncate max-w-[200px]">
-                    {success.schoolName} ({success.board})
-                  </span>
-                </div>
-                <div className="flex justify-between items-center py-2.5 px-4">
-                  <span className="text-xs text-slate-500 font-medium">Examination Date</span>
-                  <span className="font-bold text-[#142850] text-right">{success.examDate}</span>
-                </div>
-                <div className="flex justify-between items-center py-2.5 px-4 bg-slate-50/60">
-                  <span className="text-xs text-slate-500 font-medium">Exam Timing</span>
-                  <span className="font-semibold text-slate-800 text-right">11:00 AM – 1:00 PM</span>
-                </div>
-                <div className="flex justify-between items-center py-2.5 px-4 bg-slate-50/60">
-                  <span className="text-xs text-slate-500 font-medium">Registered Contact</span>
-                  <span className="font-semibold text-slate-800 text-right">
-                    {success.studentMobile}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center py-2.5 px-4">
-                  <span className="text-xs text-slate-500 font-medium">Mode & Venue</span>
-                  <span className="font-semibold text-[#142850] text-right">
-                    Offline • Shiksharthi Campus
-                  </span>
-                </div>
+            <div className="flex items-center gap-2.5 w-full sm:w-auto">
+              <Button
+                type="button"
+                onClick={() => window.print()}
+                className="flex-1 sm:flex-none bg-[#142850] hover:bg-[#0f1f3d] text-white font-semibold rounded-xl px-4 py-2 text-xs shadow-md cursor-pointer flex items-center gap-2"
+              >
+                <Printer size={15} />
+                <span>Print / Save Admit Card (PDF)</span>
+              </Button>
+              <Button
+                type="button"
+                onClick={resetForm}
+                variant="outline"
+                className="flex-1 sm:flex-none border-slate-200 text-slate-700 hover:bg-slate-100 rounded-xl px-3 py-2 text-xs cursor-pointer"
+              >
+                New Form
+              </Button>
+            </div>
+          </div>
+
+          {/* =========================================================================
+              THE OFFICIAL 1-PAGE ADMIT CARD (PRINTED & SCREEN DISPLAY)
+             ========================================================================= */}
+          <div
+            id="ssat-admit-card"
+            className="bg-white text-slate-900 border-2 border-slate-900 rounded-lg p-5 sm:p-7 shadow-xl mx-auto relative overflow-hidden"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            {/* Watermark in Background */}
+            <div
+              className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.035] select-none"
+              aria-hidden="true"
+            >
+              <span className="text-[120px] font-black tracking-widest uppercase text-slate-900 -rotate-45">
+                SSAT 2026
+              </span>
+            </div>
+
+            {/* Header Section */}
+            <header className="border-b-2 border-slate-900 pb-3 text-center relative">
+              {/* Logo */}
+              <div className="flex justify-center mb-1">
+                <img
+                  src="/shiksharthi-logo.jpg"
+                  alt="Shiksharthi Logo"
+                  className="h-14 sm:h-16 w-auto object-contain max-w-[280px]"
+                />
               </div>
 
-              {/* Notice Box */}
-              <div className="flex items-start gap-3 p-3.5 bg-blue-50/80 border border-blue-100 rounded-xl text-xs text-slate-700 leading-relaxed">
-                <ShieldCheck size={18} className="text-[#142850] shrink-0 mt-0.5" />
-                <span>
-                  Your registration is recorded. Please arrive at the examination venue at least <strong>30 minutes</strong> before 11:00 AM. Bring a printed or digital copy of this Registration ID along with your school ID card.
+              {/* Text Under Logo */}
+              <h1 className="text-base sm:text-xl font-extrabold tracking-tight text-[#142850] uppercase">
+                Shiksharthi Educational Institute
+              </h1>
+              <p className="text-[10px] sm:text-[11px] font-medium text-slate-600 tracking-wide mt-0.5">
+                Premier Institute for IIT-JEE, NEET & Foundation | Kolkata, West Bengal
+              </p>
+
+              {/* Examination Title Ribbon */}
+              <div className="mt-2.5 bg-[#142850] text-white py-1.5 px-3 rounded-md inline-block max-w-full">
+                <span className="text-[11px] sm:text-xs font-bold tracking-wider uppercase block">
+                  SHIKSHARTHI SCHOLARSHIP ADMISSION TEST (SSAT 2026)
+                </span>
+                <span className="text-[9px] sm:text-[10px] font-medium tracking-widest uppercase text-amber-300 block">
+                  ★ OFFICIAL HALL TICKET & ADMIT CARD ★
                 </span>
               </div>
+            </header>
 
-              {/* Action buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <Button
-                  type="button"
-                  onClick={() => window.print()}
-                  variant="outline"
-                  className="flex-1 border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold rounded-xl h-11 cursor-pointer"
-                >
-                  <Printer size={16} className="mr-2 text-slate-500" />
-                  Print / Save Pass
-                </Button>
-                <Button
-                  type="button"
-                  onClick={resetForm}
-                  className="flex-1 bg-[#142850] hover:bg-[#0f1f3d] text-white font-semibold rounded-xl h-11 cursor-pointer"
-                >
-                  Register Another Student
-                </Button>
+            {/* Hall Ticket Bar */}
+            <div className="my-2.5 py-1.5 px-3 bg-slate-50 border border-slate-300 rounded flex flex-wrap items-center justify-between text-xs gap-2">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] font-bold uppercase text-slate-500">Roll / Admit No:</span>
+                <span className="font-mono font-extrabold text-sm sm:text-base text-[#142850] tracking-wider">
+                  {success.regId}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-[10px] text-slate-500">
+                <span>Class: <strong className="text-slate-800">10 (Science)</strong></span>
+                <span>•</span>
+                <span>Category: <strong className="text-slate-800">Scholarship Exam</strong></span>
               </div>
             </div>
+
+            {/* Candidate & Examination Details Grid */}
+            <div className="grid grid-cols-12 gap-3 my-2 text-xs">
+              {/* Student Details (Left 9 columns) */}
+              <div className="col-span-8 sm:col-span-9 border border-slate-300 rounded overflow-hidden">
+                <table className="w-full text-left border-collapse text-[11px] sm:text-xs">
+                  <tbody>
+                    <tr className="border-b border-slate-200">
+                      <td className="py-1 px-2.5 font-bold text-slate-500 bg-slate-50/80 w-1/3">Candidate Name</td>
+                      <td className="py-1 px-2.5 font-extrabold text-[#142850] uppercase text-xs sm:text-sm">
+                        {success.studentName}
+                      </td>
+                    </tr>
+                    <tr className="border-b border-slate-200">
+                      <td className="py-1 px-2.5 font-bold text-slate-500 bg-slate-50/80">School & Board</td>
+                      <td className="py-1 px-2.5 font-semibold text-slate-800">
+                        {success.schoolName} ({success.board})
+                      </td>
+                    </tr>
+                    <tr className="border-b border-slate-200">
+                      <td className="py-1 px-2.5 font-bold text-slate-500 bg-slate-50/80">Student Mobile</td>
+                      <td className="py-1 px-2.5 font-mono font-semibold text-slate-800">
+                        +91 {success.studentMobile}
+                      </td>
+                    </tr>
+                    <tr className="border-b border-slate-200">
+                      <td className="py-1 px-2.5 font-bold text-slate-500 bg-slate-50/80">Parent Mobile</td>
+                      <td className="py-1 px-2.5 font-mono font-semibold text-slate-800">
+                        +91 {success.parentMobile}
+                      </td>
+                    </tr>
+                    <tr className="border-b border-slate-200">
+                      <td className="py-1 px-2.5 font-bold text-slate-500 bg-slate-50/80">Date of Examination</td>
+                      <td className="py-1 px-2.5 font-extrabold text-[#142850]">
+                        {success.examDate}
+                      </td>
+                    </tr>
+                    <tr className="border-b border-slate-200">
+                      <td className="py-1 px-2.5 font-bold text-slate-500 bg-slate-50/80">Reporting Time</td>
+                      <td className="py-1 px-2.5 font-bold text-amber-700">
+                        10:30 AM (Sharp)
+                      </td>
+                    </tr>
+                    <tr className="border-b border-slate-200">
+                      <td className="py-1 px-2.5 font-bold text-slate-500 bg-slate-50/80">Examination Timing</td>
+                      <td className="py-1 px-2.5 font-semibold text-slate-800">
+                        11:00 AM – 1:00 PM (Duration: 2 Hours)
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-1 px-2.5 font-bold text-slate-500 bg-slate-50/80">Examination Venue</td>
+                      <td className="py-1 px-2.5 font-semibold text-slate-800">
+                        Shiksharthi Educational Institute, Kolkata
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Photo Box (Right 3 columns) */}
+              <div className="col-span-4 sm:col-span-3 flex flex-col justify-between items-center text-center border border-slate-300 rounded p-1.5 bg-slate-50/50">
+                <div className="w-full h-28 sm:h-32 border-2 border-dashed border-slate-300 rounded flex flex-col items-center justify-center p-1 bg-white text-[9px] text-slate-400">
+                  <User size={24} className="opacity-30 mb-1" />
+                  <span>Affix Recent Passport Size Photograph</span>
+                  <span className="text-[8px] text-slate-300 mt-0.5">(Self-Attested)</span>
+                </div>
+                <div className="text-[8px] text-slate-400 font-semibold uppercase tracking-wider mt-1">
+                  Candidate Photo
+                </div>
+              </div>
+            </div>
+
+            {/* Signatures & Seal Row */}
+            <div className="grid grid-cols-3 gap-2 my-2.5 pt-2 border-t border-slate-200 text-center text-[10px]">
+              <div className="border border-slate-200 rounded p-1.5">
+                <div className="h-9 flex items-end justify-center border-b border-dashed border-slate-300 pb-0.5">
+                  <span className="font-mono text-[9px] text-slate-400">Sign here during exam</span>
+                </div>
+                <span className="font-semibold text-slate-700 block mt-1">Candidate's Signature</span>
+              </div>
+              <div className="border border-slate-200 rounded p-1.5">
+                <div className="h-9 flex items-end justify-center border-b border-dashed border-slate-300 pb-0.5" />
+                <span className="font-semibold text-slate-700 block mt-1">Invigilator's Signature</span>
+              </div>
+              <div className="border border-slate-200 rounded p-1.5 bg-slate-50/50">
+                <div className="h-9 flex items-center justify-center border-b border-dashed border-slate-300 pb-0.5">
+                  <span className="text-[9px] font-bold text-emerald-700 uppercase tracking-wider flex items-center gap-1">
+                    <ShieldCheck size={12} />
+                    Verified & Authorized
+                  </span>
+                </div>
+                <span className="font-semibold text-slate-700 block mt-1">Controller of Examinations</span>
+              </div>
+            </div>
+
+            {/* Examination Instructions Section */}
+            <div className="border-t-2 border-slate-900 pt-2 mt-2">
+              <h4 className="text-[10px] font-extrabold uppercase tracking-wider text-[#142850] mb-1">
+                Important Instructions for Candidates
+              </h4>
+              <ol className="list-decimal list-inside text-[9.5px] sm:text-[10px] text-slate-700 space-y-0.5 leading-tight">
+                <li>
+                  <strong>Mandatory Entry Pass:</strong> Candidates must bring this printed Admit Card along with their original School Identity Card or Aadhaar Card.
+                </li>
+                <li>
+                  <strong>Reporting Time:</strong> Report to the examination venue by <strong>10:30 AM</strong>. Entry gates close at 10:55 AM. No candidate will be allowed after 11:15 AM.
+                </li>
+                <li>
+                  <strong>Permitted Stationery:</strong> Use only <strong>Blue or Black ballpoint pens</strong>. Rough sheets will be provided in the examination hall.
+                </li>
+                <li>
+                  <strong>Prohibited Items:</strong> Mobile phones, smartwatches, calculators, and electronic gadgets are strictly banned inside the hall.
+                </li>
+                <li>
+                  <strong>Scholarships:</strong> Top 100 students receive scholarship opportunities; top 10 receive <strong>₹1,00,000 scholarship</strong> awards.
+                </li>
+              </ol>
+            </div>
+
+            {/* Footer Helpline */}
+            <div className="mt-2.5 pt-1.5 border-t border-slate-200 text-center text-[9px] text-slate-500 flex flex-wrap items-center justify-between gap-1">
+              <span>Helpline: <strong>+91 90070 63109</strong></span>
+              <span>Email: <strong>info@shiksharthi.org</strong></span>
+              <span>Website: <strong>www.shiksharthi.org</strong></span>
+              <span className="text-slate-400 italic">Valid only for SSAT 2026 Examination</span>
+            </div>
+          </div>
+
+          {/* Bottom helper tip (Screen Only) */}
+          <div className="no-print mt-4 text-center">
+            <p className="text-xs text-slate-500">
+              💡 Tip: Click <strong>"Print / Save Admit Card"</strong> above. In the print dialog, select <strong>"Save as PDF"</strong> to save this 1-page admit card on your phone or computer.
+            </p>
           </div>
         </div>
       </section>

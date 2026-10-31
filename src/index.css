@@ -106,3 +106,62 @@
 .handwritten {
   font-family: 'Wildflower', cursive;
 }
+
+/* =========================================================
+   SSAT ADMIT CARD 1-PAGE PRINT STYLES
+   ========================================================= */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 6mm 8mm;
+  }
+
+  /* Hide everything on the page except the Admit Card */
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  /* Make ONLY the admit card container visible and positioned for single A4 */
+  #ssat-admit-card,
+  #ssat-admit-card * {
+    visibility: visible;
+  }
+
+  #ssat-admit-card {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 8px 12px !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    border: 2px solid #0f172a !important;
+    border-radius: 4px !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Explicitly hide any button, nav, or helper banner */
+  .no-print,
+  nav,
+  header,
+  footer,
+  #ssat-register .no-print {
+    display: none !important;
+    visibility: hidden !important;
+  }
+}
