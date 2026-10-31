@@ -14,6 +14,7 @@ import Index from "./pages/Index";
 import AchieversPage from "./pages/AchieversPage";
 import GalleryPage from "./pages/GalleryPage";
 import SSATPage from "./pages/SSATPage";
+import AdminPage from "./pages/AdminPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +40,9 @@ function App() {
               <Route path="/gallery" element={<GalleryPage />} />
               <Route path="/ssat" element={<SSATPage />} />
             </Route>
+
+            {/* ================= ADMIN DASHBOARD ================= */}
+            <Route path="/admin" element={<AdminPage />} />
 
             {/* ================= 404 ================= */}
             <Route path="*" element={<NotFound />} />

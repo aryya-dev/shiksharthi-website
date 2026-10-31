@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { addRegistration } from "@/lib/ssatDatabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -16,7 +17,11 @@ import {
   Sparkles,
   Clock,
   Printer,
-  ChevronDown
+  ChevronDown,
+  FileText,
+  AlertCircle,
+  Award,
+  MapPin,
 } from "lucide-react";
 
 type Board = "ICSE" | "CBSE" | "WBBSE" | "Other" | "";
@@ -45,19 +50,29 @@ interface FormErrors {
 }
 
 const BOARDS: Board[] = ["ICSE", "CBSE", "WBBSE", "Other"];
-const EXAM_DATES: { date: ExamDate; day: string; time: string; badge: string }[] = [
+const EXAM_DATES: { date: ExamDate; day: string; time: string; badge: string; seats: string }[] = [
   {
     date: "15 November 2026",
     day: "Sunday",
     time: "11:00 AM – 1:00 PM",
-    badge: "Slot 1"
+    badge: "Slot 1",
+    seats: "Filling Fast",
   },
   {
     date: "22 November 2026",
     day: "Sunday",
     time: "11:00 AM – 1:00 PM",
-    badge: "Slot 2"
-  }
+    badge: "Slot 2",
+    seats: "Available",
+  },
+];
+
+// Form sections for progress tracking
+const FORM_SECTIONS = [
+  { id: "candidate", label: "Candidate", icon: User },
+  { id: "contact", label: "Contact", icon: Phone },
+  { id: "schedule", label: "Schedule", icon: Calendar },
+  { id: "confirm", label: "Confirm", icon: ShieldCheck },
 ];
 
 function generateRegistrationId(): string {
@@ -98,6 +113,19 @@ const SSATRegistration = () => {
   } | null>(null);
   const [copied, setCopied] = useState(false);
 
+  // Track completed sections for the progress bar
+  const completedSections = useMemo(() => {
+    const done: boolean[] = [
+      !!(form.studentName.trim() && form.schoolName.trim() && form.board),
+      !!(form.studentMobile.trim() && form.parentMobile.trim()),
+      !!form.examDate,
+      form.consent,
+    ];
+    return done;
+  }, [form]);
+
+  const completedCount = completedSections.filter(Boolean).length;
+
   const validate = (): FormErrors => {
     const e: FormErrors = {};
     if (!form.studentName.trim()) e.studentName = "Please enter student's full name.";
@@ -117,7 +145,7 @@ const SSATRegistration = () => {
       e.email = "Please enter a valid email address.";
     }
     if (!form.examDate) e.examDate = "Please choose your preferred examination date.";
-    if (!form.consent) e.consent = "Please check the box to confirm eligibility and agree to terms.";
+    if (!form.consent) e.consent = "Please confirm eligibility and agree to the terms.";
     return e;
   };
 
@@ -146,6 +174,20 @@ const SSATRegistration = () => {
 
     const regId = generateRegistrationId();
 
+    // Save registration to local database
+    addRegistration({
+      regId,
+      studentName: form.studentName,
+      schoolName: form.schoolName,
+      board: form.board,
+      studentMobile: form.studentMobile,
+      parentMobile: form.parentMobile,
+      email: form.email,
+      examDate: form.examDate as string,
+      consent: form.consent,
+      registeredAt: new Date().toISOString(),
+    });
+
     setSuccess({
       regId,
       studentName: form.studentName,
@@ -163,6 +205,7 @@ const SSATRegistration = () => {
       document.getElementById("ssat-register")?.scrollIntoView({ behavior: "smooth" });
     }, 100);
   };
+
 
   const copyRegId = () => {
     if (success) {
@@ -322,6 +365,7 @@ const SSATRegistration = () => {
     >
       {/* Decorative ambient background spots */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-amber-400/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[400px] h-[250px] bg-[#142850]/[0.03] rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-2xl mx-auto px-4 sm:px-6 relative z-10">
         {/* Section Header */}
@@ -338,7 +382,7 @@ const SSATRegistration = () => {
           </p>
         </div>
 
-        {/* Master Form Card / Div */}
+        {/* Master Form Card */}
         <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-xl sm:shadow-2xl overflow-hidden">
           {/* Card Top Brand Banner */}
           <div className="bg-gradient-to-r from-[#142850] via-[#1a3466] to-[#142850] text-white px-5 sm:px-8 py-5 border-b border-white/10">
@@ -359,13 +403,76 @@ const SSATRegistration = () => {
             </div>
           </div>
 
+          {/* Progress Steps */}
+          <div className="px-5 sm:px-8 pt-6 pb-2">
+            <div className="flex items-center justify-between">
+              {FORM_SECTIONS.map((section, idx) => {
+                const Icon = section.icon;
+                const isComplete = completedSections[idx];
+                const isLast = idx === FORM_SECTIONS.length - 1;
+                return (
+                  <div key={section.id} className="flex items-center flex-1 last:flex-none">
+                    <div className="flex flex-col items-center gap-1.5">
+                      <div
+                        className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all duration-300 ${
+                          isComplete
+                            ? "bg-emerald-500 text-white shadow-md shadow-emerald-500/25"
+                            : "bg-slate-100 text-slate-400 border border-slate-200"
+                        }`}
+                      >
+                        {isComplete ? (
+                          <Check size={14} className="stroke-[3]" />
+                        ) : (
+                          <Icon size={14} />
+                        )}
+                      </div>
+                      <span
+                        className={`text-[10px] sm:text-[11px] font-semibold tracking-wide transition-colors ${
+                          isComplete ? "text-emerald-600" : "text-slate-400"
+                        }`}
+                      >
+                        {section.label}
+                      </span>
+                    </div>
+                    {!isLast && (
+                      <div className="flex-1 mx-2 sm:mx-3 mb-5">
+                        <div className="h-[2px] rounded-full bg-slate-100 overflow-hidden">
+                          <div
+                            className={`h-full rounded-full transition-all duration-500 ease-out ${
+                              isComplete ? "bg-emerald-400 w-full" : "bg-transparent w-0"
+                            }`}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            {/* Micro text */}
+            <div className="mt-2 text-center">
+              <span className="text-[11px] text-slate-400">
+                {completedCount === 4 ? (
+                  <span className="text-emerald-600 font-semibold">✓ All sections complete — ready to submit</span>
+                ) : (
+                  <>{completedCount} of 4 sections complete</>
+                )}
+              </span>
+            </div>
+          </div>
+
           {/* Form Content */}
-          <form onSubmit={handleSubmit} noValidate className="p-5 sm:p-8 md:p-10 space-y-7">
+          <form onSubmit={handleSubmit} noValidate className="p-5 sm:p-8 md:p-10 space-y-8">
             {/* SECTION 1: CANDIDATE INFORMATION */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 pb-1 border-b border-slate-100">
-                <User size={14} className="text-[#eab308]" />
-                <span>Candidate Information</span>
+            <div className="space-y-5">
+              <div className="flex items-center gap-2.5 pb-2 border-b border-slate-100">
+                <div className="w-7 h-7 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                  <User size={14} className="text-[#eab308]" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-700">Candidate Information</span>
+                  <p className="text-[10px] text-slate-400 mt-0.5">Student details as per school records</p>
+                </div>
               </div>
 
               {/* Student Name */}
@@ -376,21 +483,25 @@ const SSATRegistration = () => {
                 >
                   Student Full Name <span className="text-red-500">*</span>
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#eab308] transition-colors">
                     <User size={16} />
                   </div>
                   <Input
                     id="ssat-input-studentName"
-
+                    placeholder="Enter student's full name"
                     value={form.studentName}
                     onChange={(e) => handleChange("studentName", e.target.value)}
-                    className={`pl-10 h-11 sm:h-12 rounded-xl text-sm sm:text-base bg-slate-50/60 border-slate-200 focus:bg-white transition-all ${errors.studentName ? "border-red-400 focus-visible:ring-red-400" : ""
-                      }`}
+                    className={`pl-10 h-11 sm:h-12 rounded-xl text-sm sm:text-base bg-slate-50/60 border-slate-200 focus:bg-white focus:border-[#eab308] focus:ring-[#eab308]/20 transition-all ${
+                      errors.studentName ? "border-red-400 focus-visible:ring-red-400" : ""
+                    }`}
                   />
                 </div>
                 {errors.studentName && (
-                  <p className="text-red-500 text-xs mt-1 font-medium">{errors.studentName}</p>
+                  <p className="flex items-center gap-1 text-red-500 text-xs mt-1.5 font-medium">
+                    <AlertCircle size={12} />
+                    {errors.studentName}
+                  </p>
                 )}
               </div>
 
@@ -403,21 +514,25 @@ const SSATRegistration = () => {
                   >
                     Current School Name <span className="text-red-500">*</span>
                   </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#eab308] transition-colors">
                       <Building2 size={16} />
                     </div>
                     <Input
                       id="ssat-input-schoolName"
-
+                      placeholder="E.g. St. Xavier's Collegiate School"
                       value={form.schoolName}
                       onChange={(e) => handleChange("schoolName", e.target.value)}
-                      className={`pl-10 h-11 sm:h-12 rounded-xl text-sm sm:text-base bg-slate-50/60 border-slate-200 focus:bg-white transition-all ${errors.schoolName ? "border-red-400 focus-visible:ring-red-400" : ""
-                        }`}
+                      className={`pl-10 h-11 sm:h-12 rounded-xl text-sm sm:text-base bg-slate-50/60 border-slate-200 focus:bg-white focus:border-[#eab308] focus:ring-[#eab308]/20 transition-all ${
+                        errors.schoolName ? "border-red-400 focus-visible:ring-red-400" : ""
+                      }`}
                     />
                   </div>
                   {errors.schoolName && (
-                    <p className="text-red-500 text-xs mt-1 font-medium">{errors.schoolName}</p>
+                    <p className="flex items-center gap-1 text-red-500 text-xs mt-1.5 font-medium">
+                      <AlertCircle size={12} />
+                      {errors.schoolName}
+                    </p>
                   )}
                 </div>
 
@@ -428,13 +543,14 @@ const SSATRegistration = () => {
                   >
                     Board <span className="text-red-500">*</span>
                   </label>
-                  <div className="relative">
+                  <div className="relative group">
                     <select
                       id="ssat-input-board"
                       value={form.board}
                       onChange={(e) => handleChange("board", e.target.value as Board)}
-                      className={`w-full h-11 sm:h-12 pl-3.5 pr-8 rounded-xl text-sm sm:text-base bg-slate-50/60 border text-slate-800 outline-none transition-all appearance-none cursor-pointer focus:bg-white focus:ring-2 focus:ring-[#eab308]/40 focus:border-[#eab308] ${errors.board ? "border-red-400" : "border-slate-200"
-                        }`}
+                      className={`w-full h-11 sm:h-12 pl-3.5 pr-8 rounded-xl text-sm sm:text-base bg-slate-50/60 border text-slate-800 outline-none transition-all appearance-none cursor-pointer focus:bg-white focus:ring-2 focus:ring-[#eab308]/30 focus:border-[#eab308] ${
+                        errors.board ? "border-red-400" : "border-slate-200"
+                      }`}
                     >
                       <option value="">Select</option>
                       {BOARDS.map((b) => (
@@ -448,17 +564,25 @@ const SSATRegistration = () => {
                     </div>
                   </div>
                   {errors.board && (
-                    <p className="text-red-500 text-xs mt-1 font-medium">{errors.board}</p>
+                    <p className="flex items-center gap-1 text-red-500 text-xs mt-1.5 font-medium">
+                      <AlertCircle size={12} />
+                      {errors.board}
+                    </p>
                   )}
                 </div>
               </div>
             </div>
 
             {/* SECTION 2: CONTACT DETAILS */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 pb-1 border-b border-slate-100">
-                <Phone size={14} className="text-[#eab308]" />
-                <span>Contact Details</span>
+            <div className="space-y-5">
+              <div className="flex items-center gap-2.5 pb-2 border-b border-slate-100">
+                <div className="w-7 h-7 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                  <Phone size={14} className="text-blue-600" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-700">Contact Details</span>
+                  <p className="text-[10px] text-slate-400 mt-0.5">For exam day communication & updates</p>
+                </div>
               </div>
 
               {/* Mobiles Grid */}
@@ -471,9 +595,9 @@ const SSATRegistration = () => {
                   >
                     Student Mobile <span className="text-red-500">*</span>
                   </label>
-                  <div className="relative">
+                  <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <span className="text-xs font-bold text-slate-500 bg-slate-200/60 px-1.5 py-0.5 rounded">
+                      <span className="text-[11px] font-bold text-slate-500 bg-slate-200/60 px-1.5 py-0.5 rounded group-focus-within:bg-[#eab308]/15 group-focus-within:text-amber-700 transition-colors">
                         +91
                       </span>
                     </div>
@@ -488,12 +612,21 @@ const SSATRegistration = () => {
                       onChange={(e) =>
                         handleChange("studentMobile", e.target.value.replace(/\D/g, ""))
                       }
-                      className={`pl-14 h-11 sm:h-12 rounded-xl text-sm sm:text-base bg-slate-50/60 border-slate-200 focus:bg-white tracking-wide transition-all ${errors.studentMobile ? "border-red-400 focus-visible:ring-red-400" : ""
-                        }`}
+                      className={`pl-14 h-11 sm:h-12 rounded-xl text-sm sm:text-base bg-slate-50/60 border-slate-200 focus:bg-white focus:border-[#eab308] focus:ring-[#eab308]/20 tracking-wide transition-all ${
+                        errors.studentMobile ? "border-red-400 focus-visible:ring-red-400" : ""
+                      }`}
                     />
+                    {form.studentMobile.length === 10 && validateMobile(form.studentMobile) && (
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        <Check size={16} className="text-emerald-500" />
+                      </div>
+                    )}
                   </div>
                   {errors.studentMobile && (
-                    <p className="text-red-500 text-xs mt-1 font-medium">{errors.studentMobile}</p>
+                    <p className="flex items-center gap-1 text-red-500 text-xs mt-1.5 font-medium">
+                      <AlertCircle size={12} />
+                      {errors.studentMobile}
+                    </p>
                   )}
                 </div>
 
@@ -505,9 +638,9 @@ const SSATRegistration = () => {
                   >
                     Parent / Guardian Mobile <span className="text-red-500">*</span>
                   </label>
-                  <div className="relative">
+                  <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <span className="text-xs font-bold text-slate-500 bg-slate-200/60 px-1.5 py-0.5 rounded">
+                      <span className="text-[11px] font-bold text-slate-500 bg-slate-200/60 px-1.5 py-0.5 rounded group-focus-within:bg-[#eab308]/15 group-focus-within:text-amber-700 transition-colors">
                         +91
                       </span>
                     </div>
@@ -522,12 +655,21 @@ const SSATRegistration = () => {
                       onChange={(e) =>
                         handleChange("parentMobile", e.target.value.replace(/\D/g, ""))
                       }
-                      className={`pl-14 h-11 sm:h-12 rounded-xl text-sm sm:text-base bg-slate-50/60 border-slate-200 focus:bg-white tracking-wide transition-all ${errors.parentMobile ? "border-red-400 focus-visible:ring-red-400" : ""
-                        }`}
+                      className={`pl-14 h-11 sm:h-12 rounded-xl text-sm sm:text-base bg-slate-50/60 border-slate-200 focus:bg-white focus:border-[#eab308] focus:ring-[#eab308]/20 tracking-wide transition-all ${
+                        errors.parentMobile ? "border-red-400 focus-visible:ring-red-400" : ""
+                      }`}
                     />
+                    {form.parentMobile.length === 10 && validateMobile(form.parentMobile) && (
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        <Check size={16} className="text-emerald-500" />
+                      </div>
+                    )}
                   </div>
                   {errors.parentMobile && (
-                    <p className="text-red-500 text-xs mt-1 font-medium">{errors.parentMobile}</p>
+                    <p className="flex items-center gap-1 text-red-500 text-xs mt-1.5 font-medium">
+                      <AlertCircle size={12} />
+                      {errors.parentMobile}
+                    </p>
                   )}
                 </div>
               </div>
@@ -539,10 +681,10 @@ const SSATRegistration = () => {
                   className="block text-xs sm:text-sm font-semibold text-slate-800 mb-1.5"
                 >
                   Email Address{" "}
-                  <span className="text-slate-400 font-normal text-xs">(Optional)</span>
+                  <span className="text-slate-400 font-normal text-xs">(Optional — for exam updates)</span>
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#eab308] transition-colors">
                     <Mail size={16} />
                   </div>
                   <Input
@@ -551,24 +693,38 @@ const SSATRegistration = () => {
                     placeholder="student@example.com"
                     value={form.email}
                     onChange={(e) => handleChange("email", e.target.value)}
-                    className={`pl-10 h-11 sm:h-12 rounded-xl text-sm sm:text-base bg-slate-50/60 border-slate-200 focus:bg-white transition-all ${errors.email ? "border-red-400 focus-visible:ring-red-400" : ""
-                      }`}
+                    className={`pl-10 h-11 sm:h-12 rounded-xl text-sm sm:text-base bg-slate-50/60 border-slate-200 focus:bg-white focus:border-[#eab308] focus:ring-[#eab308]/20 transition-all ${
+                      errors.email ? "border-red-400 focus-visible:ring-red-400" : ""
+                    }`}
                   />
                 </div>
                 {errors.email && (
-                  <p className="text-red-500 text-xs mt-1 font-medium">{errors.email}</p>
+                  <p className="flex items-center gap-1 text-red-500 text-xs mt-1.5 font-medium">
+                    <AlertCircle size={12} />
+                    {errors.email}
+                  </p>
                 )}
               </div>
             </div>
 
             {/* SECTION 3: EXAM DATE SELECTION */}
-            <div id="ssat-field-examDate" className="space-y-3">
-              <div className="flex items-center justify-between pb-1 border-b border-slate-100">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500">
-                  <Calendar size={14} className="text-[#eab308]" />
-                  <span>Choose Examination Date <span className="text-red-500">*</span></span>
+            <div id="ssat-field-examDate" className="space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                    <Calendar size={14} className="text-purple-600" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                      Choose Examination Date <span className="text-red-500">*</span>
+                    </span>
+                    <p className="text-[10px] text-slate-400 mt-0.5">Select your preferred slot</p>
+                  </div>
                 </div>
-                <span className="text-[11px] text-slate-400">Offline pen & paper</span>
+                <span className="text-[10px] text-slate-400 bg-slate-50 px-2 py-1 rounded-full border border-slate-100 flex items-center gap-1">
+                  <MapPin size={10} />
+                  Offline · Pen & Paper
+                </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -579,35 +735,49 @@ const SSATRegistration = () => {
                       key={item.date}
                       id={`ssat-date-btn-${item.date.replace(/\s/g, "-")}`}
                       onClick={() => handleChange("examDate", item.date)}
-                      className={`relative p-4 rounded-xl sm:rounded-2xl border-2 cursor-pointer transition-all duration-200 select-none ${isSelected
-                          ? "border-[#eab308] bg-amber-500/5 shadow-md ring-1 ring-[#eab308]/40"
-                          : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
-                        }`}
+                      className={`relative p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 cursor-pointer transition-all duration-200 select-none group ${
+                        isSelected
+                          ? "border-[#eab308] bg-gradient-to-br from-amber-500/5 to-amber-400/10 shadow-lg shadow-amber-500/10 ring-1 ring-[#eab308]/40"
+                          : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50 hover:shadow-md"
+                      }`}
                     >
                       <div className="flex items-start justify-between">
-                        <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${isSelected
-                              ? "bg-[#142850] text-[#eab308]"
-                              : "bg-slate-100 text-slate-600"
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                              isSelected
+                                ? "bg-[#142850] text-[#eab308]"
+                                : "bg-slate-100 text-slate-600"
                             }`}
-                        >
-                          {item.badge}
-                        </span>
+                          >
+                            {item.badge}
+                          </span>
+                          <span
+                            className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                              item.seats === "Filling Fast"
+                                ? "bg-orange-100 text-orange-700"
+                                : "bg-emerald-50 text-emerald-700"
+                            }`}
+                          >
+                            {item.seats}
+                          </span>
+                        </div>
                         <div
-                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${isSelected
-                              ? "border-[#eab308] bg-[#eab308]"
-                              : "border-slate-300 bg-white"
-                            }`}
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                            isSelected
+                              ? "border-[#eab308] bg-[#eab308] scale-110"
+                              : "border-slate-300 bg-white group-hover:border-slate-400"
+                          }`}
                         >
                           {isSelected && <Check size={12} className="text-slate-900 stroke-[3]" />}
                         </div>
                       </div>
 
                       <div className="mt-3">
-                        <div className="font-extrabold text-sm sm:text-base text-[#142850]">
+                        <div className={`font-extrabold text-sm sm:text-base ${isSelected ? "text-[#142850]" : "text-slate-700"}`}>
                           {item.date}
                         </div>
-                        <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
+                        <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-1.5">
                           <Clock size={12} className="text-slate-400" />
                           <span>{item.day} • {item.time}</span>
                         </div>
@@ -617,55 +787,100 @@ const SSATRegistration = () => {
                 })}
               </div>
               {errors.examDate && (
-                <p className="text-red-500 text-xs mt-1 font-medium">{errors.examDate}</p>
+                <p className="flex items-center gap-1 text-red-500 text-xs mt-1 font-medium">
+                  <AlertCircle size={12} />
+                  {errors.examDate}
+                </p>
               )}
             </div>
 
-            {/* SECTION 4: DECLARATION & CONSENT */}
-            <div id="ssat-field-consent" className="pt-2">
-              <label
-                htmlFor="ssat-consent-checkbox"
+            {/* SECTION 4: DECLARATION & CONSENT — FIXED checkbox */}
+            <div id="ssat-field-consent" className="space-y-4">
+              <div className="flex items-center gap-2.5 pb-2 border-b border-slate-100">
+                <div className="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                  <FileText size={14} className="text-emerald-600" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-700">Declaration & Consent</span>
+                  <p className="text-[10px] text-slate-400 mt-0.5">Review and accept the terms</p>
+                </div>
+              </div>
+
+              {/* Terms summary box */}
+              <div className="bg-slate-50/80 border border-slate-100 rounded-xl p-4 space-y-2.5">
+                <div className="flex items-start gap-2.5 text-xs text-slate-600">
+                  <Award size={14} className="text-amber-600 shrink-0 mt-0.5" />
+                  <span>Scholarships worth up to <strong className="text-slate-800">₹1,00,000</strong> awarded strictly on merit basis.</span>
+                </div>
+                <div className="flex items-start gap-2.5 text-xs text-slate-600">
+                  <ShieldCheck size={14} className="text-[#142850] shrink-0 mt-0.5" />
+                  <span>Candidates must be currently enrolled as <strong className="text-slate-800">Class 10 Science</strong> students.</span>
+                </div>
+                <div className="flex items-start gap-2.5 text-xs text-slate-600">
+                  <FileText size={14} className="text-slate-500 shrink-0 mt-0.5" />
+                  <span>By registering, you agree to follow all SSAT examination rules and guidelines.</span>
+                </div>
+              </div>
+
+              {/* Consent checkbox — uses only onClick on the wrapper div, no conflicting htmlFor */}
+              <div
+                role="checkbox"
+                aria-checked={form.consent}
+                tabIndex={0}
                 onClick={() => handleChange("consent", !form.consent)}
-                className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer select-none flex items-start gap-3 ${form.consent
-                    ? "bg-amber-50/50 border-amber-300/80"
+                onKeyDown={(e) => {
+                  if (e.key === " " || e.key === "Enter") {
+                    e.preventDefault();
+                    handleChange("consent", !form.consent);
+                  }
+                }}
+                className={`p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 transition-all duration-200 cursor-pointer select-none flex items-start gap-3.5 ${
+                  form.consent
+                    ? "bg-emerald-50/50 border-emerald-400/70 shadow-md shadow-emerald-500/10"
                     : errors.consent
-                      ? "bg-red-50/40 border-red-300"
-                      : "bg-slate-50/60 border-slate-200 hover:bg-slate-100/50"
-                  }`}
+                      ? "bg-red-50/40 border-red-300 shadow-sm shadow-red-500/5"
+                      : "bg-slate-50/60 border-slate-200 hover:bg-slate-100/50 hover:border-slate-300"
+                }`}
               >
-                <input
-                  type="checkbox"
-                  id="ssat-consent-checkbox"
-                  checked={form.consent}
-                  onChange={(e) => handleChange("consent", e.target.checked)}
-                  className="sr-only"
-                />
                 <div
-                  className={`mt-0.5 w-5 h-5 rounded-md border-2 shrink-0 flex items-center justify-center transition-all ${form.consent
-                      ? "bg-[#eab308] border-[#eab308]"
+                  className={`mt-0.5 w-6 h-6 rounded-lg border-2 shrink-0 flex items-center justify-center transition-all duration-200 ${
+                    form.consent
+                      ? "bg-emerald-500 border-emerald-500 scale-105"
                       : errors.consent
                         ? "border-red-400 bg-white"
                         : "border-slate-300 bg-white"
-                    }`}
+                  }`}
                 >
-                  {form.consent && <Check size={13} className="text-slate-900 stroke-[3]" />}
+                  {form.consent && <Check size={14} className="text-white stroke-[3]" />}
                 </div>
-                <div className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-                  I confirm that I am a <strong>Class 10 Science student</strong> preparing for Class 11 admission. I agree to adhere to all SSAT examination guidelines and understand that scholarship allocation is strictly merit-based.
+                <div className="flex-1">
+                  <div className={`text-sm font-semibold ${form.consent ? "text-emerald-800" : "text-slate-800"}`}>
+                    I confirm my eligibility & accept the terms
+                  </div>
+                  <p className="text-xs text-slate-500 leading-relaxed mt-1">
+                    I declare that I am a Class 10 Science student preparing for Class 11 admission. I agree to adhere to all SSAT examination guidelines and understand that scholarship allocation is strictly merit-based.
+                  </p>
                 </div>
-              </label>
+              </div>
               {errors.consent && (
-                <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.consent}</p>
+                <p className="flex items-center gap-1 text-red-500 text-xs font-medium">
+                  <AlertCircle size={12} />
+                  {errors.consent}
+                </p>
               )}
             </div>
 
             {/* SUBMIT BUTTON */}
-            <div>
+            <div className="pt-2">
               <Button
                 id="ssat-submit-btn"
                 type="submit"
                 disabled={submitting}
-                className="w-full h-12 sm:h-14 text-sm sm:text-base font-bold text-slate-950 bg-gradient-to-r from-[#eab308] via-amber-400 to-[#d4a307] hover:brightness-105 active:scale-[0.99] rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all cursor-pointer border-0"
+                className={`w-full h-12 sm:h-14 text-sm sm:text-base font-bold rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all cursor-pointer border-0 ${
+                  completedCount === 4
+                    ? "text-slate-950 bg-gradient-to-r from-[#eab308] via-amber-400 to-[#d4a307] hover:brightness-105 active:scale-[0.99]"
+                    : "text-slate-950 bg-gradient-to-r from-[#eab308] via-amber-400 to-[#d4a307] hover:brightness-105 active:scale-[0.99]"
+                }`}
               >
                 {submitting ? (
                   <span className="flex items-center justify-center gap-2">
@@ -679,6 +894,12 @@ const SSATRegistration = () => {
                   </span>
                 )}
               </Button>
+
+              {/* Security trust badge */}
+              <div className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
+                <ShieldCheck size={12} />
+                <span>Your data is secure and used only for SSAT registration purposes.</span>
+              </div>
             </div>
           </form>
         </div>
