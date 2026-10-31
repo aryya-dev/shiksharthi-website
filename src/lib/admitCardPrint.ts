@@ -14,12 +14,364 @@ export function isMobileDevice(): boolean {
 }
 
 /**
- * Builds the standalone, pixel-perfect HTML string for the 1-page Admit Card.
- * Used for both the popup print window and the off-screen high-res canvas PDF renderer.
+ * Helper to render an HTML canvas to an A4 PDF and auto-download it.
  */
-export function buildAdmitCardHTML(record: SSATRegistrationRecord, isStandaloneWindow = false): string {
+function renderCanvasToPDF(canvas: HTMLCanvasElement, regId: string): void {
+  const imgData = canvas.toDataURL("image/jpeg", 0.98);
+
+  const pdf = new jsPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: "a4",
+  });
+
+  const pdfWidth = 210; // A4 width in mm
+  const targetWidth = pdfWidth - 14; // 196mm width (7mm margins)
+  const targetHeight = (canvas.height * targetWidth) / canvas.width;
+
+  // Strict 1-page fit
+  let renderWidth = targetWidth;
+  let renderHeight = targetHeight;
+  if (renderHeight > 282) {
+    const scale = 282 / renderHeight;
+    renderHeight = 282;
+    renderWidth = renderWidth * scale;
+  }
+
+  const xOffset = (pdfWidth - renderWidth) / 2;
+  const yOffset = 7;
+
+  pdf.addImage(imgData, "JPEG", xOffset, yOffset, renderWidth, renderHeight);
+  pdf.save(`SSAT_2026_Admit_Card_${regId}.pdf`);
+}
+
+/**
+ * Generates and automatically downloads a crisp, 1-page A4 PDF file of the Admit Card.
+ * Captures the exact on-screen DOM card directly so the downloaded PDF is 100% identical to the browser view.
+ */
+export async function downloadAdmitCardPDF(record: SSATRegistrationRecord): Promise<void> {
+  const existingCard = document.getElementById("ssat-admit-card");
+
+  // 1. If the card is already in the DOM (e.g. on Registration success screen),
+  // capture the exact on-screen DOM element directly!
+  if (existingCard) {
+    const prevWidth = existingCard.style.width;
+    const prevMaxWidth = existingCard.style.maxWidth;
+    const prevMinWidth = existingCard.style.minWidth;
+    const prevShadow = existingCard.style.boxShadow;
+    const prevMargin = existingCard.style.margin;
+
+    // Temporarily standardize width to 760px desktop A4 proportion during capture
+    existingCard.style.width = "760px";
+    existingCard.style.maxWidth = "760px";
+    existingCard.style.minWidth = "760px";
+    existingCard.style.boxShadow = "none";
+    existingCard.style.margin = "0 auto";
+
+    try {
+      const canvas = await html2canvas(existingCard, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: "#ffffff",
+        logging: false,
+      });
+
+      renderCanvasToPDF(canvas, record.regId);
+      return;
+    } catch (err) {
+      console.error("DOM capture failed, falling back to off-screen generator:", err);
+    } finally {
+      existingCard.style.width = prevWidth;
+      existingCard.style.maxWidth = prevMaxWidth;
+      existingCard.style.minWidth = prevMinWidth;
+      existingCard.style.boxShadow = prevShadow;
+      existingCard.style.margin = prevMargin;
+    }
+  }
+
+  // 2. Fallback: For downloads initiated from Admin Page or when #ssat-admit-card is not in DOM.
+  // We build the EXACT identical DOM structure with the watermark, SVG icons, and typography.
+  const container = document.createElement("div");
+  container.id = "ssat-admit-card-pdf-render";
+  container.style.position = "fixed";
+  container.style.top = "0";
+  container.style.left = "-9999px";
+  container.style.width = "760px";
+  container.style.maxWidth = "760px";
+  container.style.minWidth = "760px";
+  container.style.background = "#ffffff";
+  container.style.color = "#0f172a";
+  container.style.zIndex = "-9999";
+  container.style.boxSizing = "border-box";
+  container.style.padding = "10px";
+  container.style.opacity = "1";
+  container.style.visibility = "visible";
+  container.style.pointerEvents = "none";
+
+  container.innerHTML = buildAdmitCardCardBodyHTML(record);
+  document.body.appendChild(container);
+
+  try {
+    const images = Array.from(container.querySelectorAll("img"));
+    await Promise.all(
+      images.map(
+        (img) =>
+          new Promise((resolve) => {
+            if (img.complete) resolve(true);
+            else {
+              img.onload = () => resolve(true);
+              img.onerror = () => resolve(true);
+            }
+          })
+      )
+    );
+
+    const canvas = await html2canvas(container, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: "#ffffff",
+      logging: false,
+    });
+
+    renderCanvasToPDF(canvas, record.regId);
+  } catch (error) {
+    console.error("PDF generation failed:", error);
+    printAdmitCardDocument(record);
+  } finally {
+    container.remove();
+  }
+}
+
+/**
+ * Universal print handler for the SSAT Admit Card.
+ * On mobile devices: Automatically triggers the PDF download directly.
+ * On desktop: Opens a dedicated clean print window and triggers window.print().
+ */
+export function printAdmitCardDocument(record: SSATRegistrationRecord): void {
+  if (isMobileDevice()) {
+    downloadAdmitCardPDF(record);
+    return;
+  }
+
+  const html = buildAdmitCardHTML(record, true);
+  const printWindow = window.open("", "_blank", "width=850,height=1100,scrollbars=yes,resizable=yes");
+
+  if (!printWindow) {
+    downloadAdmitCardPDF(record);
+    return;
+  }
+
+  printWindow.document.open();
+  printWindow.document.write(html);
+  printWindow.document.close();
+
+  printWindow.onload = () => {
+    setTimeout(() => {
+      printWindow.focus();
+      printWindow.print();
+    }, 300);
+  };
+
+  setTimeout(() => {
+    if (printWindow && !printWindow.closed) {
+      try {
+        printWindow.focus();
+        printWindow.print();
+      } catch {
+        // Ignored
+      }
+    }
+  }, 1200);
+}
+
+/**
+ * Generates the EXACT identical HTML for the Admit Card, including the watermark,
+ * SVG icons, and exact styling matching the on-screen browser display.
+ */
+function buildAdmitCardCardBodyHTML(record: SSATRegistrationRecord): string {
   const logo = SHIKSHARTHI_LOGO_BASE64;
 
+  return `
+    <div style="position: relative; width: 100%; background: #ffffff; color: #0f172a; border: 2px solid #0f172a; border-radius: 8px; padding: 18px 24px; box-sizing: border-box; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+      
+      <!-- Watermark in Background -->
+      <div style="position: absolute; inset: 0; pointer-events: none; display: flex; align-items: center; justify-content: center; opacity: 0.035; user-select: none;">
+        <span style="font-size: 110px; font-weight: 900; letter-spacing: 4px; text-transform: uppercase; color: #0f172a; transform: rotate(-45deg); display: block;">
+          SSAT 2026
+        </span>
+      </div>
+
+      <!-- Header Section -->
+      <div style="border-bottom: 2px solid #0f172a; padding-bottom: 10px; text-align: center; position: relative; z-index: 2;">
+        <div style="display: flex; justify-content: center; margin-bottom: 4px;">
+          <img src="${logo}" style="height: 54px; max-width: 280px; object-fit: contain; display: block; margin: 0 auto;" alt="Shiksharthi Logo" />
+        </div>
+        <h1 style="font-size: 18px; font-weight: 800; letter-spacing: -0.2px; color: #142850; text-transform: uppercase; margin: 0;">
+          Shiksharthi Educational Institute
+        </h1>
+        <p style="font-size: 10.5px; font-weight: 600; color: #475569; letter-spacing: 0.3px; margin: 2px 0 6px 0;">
+          Premier Institute for IIT-JEE, NEET &amp; Foundation | Kolkata, West Bengal
+        </p>
+
+        <!-- Examination Title Ribbon (Identical to Browser Card) -->
+        <div style="margin-top: 6px; background: #f8fafc; border: 1.5px solid #142850; padding: 5px 16px; border-radius: 6px; display: inline-block; text-align: center;">
+          <span style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; display: block; color: #142850; line-height: 1.3;">
+            SHIKSHARTHI SCHOLARSHIP ADMISSION TEST (SSAT 2026)
+          </span>
+          <span style="font-size: 9.5px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; display: block; color: #b45309; margin-top: 2px; line-height: 1.2;">
+            ★ OFFICIAL HALL TICKET &amp; ADMIT CARD ★
+          </span>
+        </div>
+      </div>
+
+      <!-- Hall Ticket Bar -->
+      <div style="margin: 8px 0; padding: 6px 12px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; position: relative; z-index: 2;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: #64748b;">Roll / Admit No:</span>
+          <span style="font-family: monospace; font-size: 14px; font-weight: 800; color: #142850; letter-spacing: 1px;">
+            ${record.regId}
+          </span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 10px; color: #64748b;">
+          <span>Class: <strong style="color: #1e293b;">10 (Science)</strong></span>
+          <span>•</span>
+          <span>Category: <strong style="color: #1e293b;">Scholarship Exam</strong></span>
+        </div>
+      </div>
+
+      <!-- Candidate & Examination Details Grid -->
+      <div style="display: grid; grid-template-columns: 3.2fr 1fr; gap: 12px; margin: 8px 0; font-size: 11px; position: relative; z-index: 2;">
+        <!-- Left Table -->
+        <div style="border: 1px solid #cbd5e1; border-radius: 4px; overflow: hidden;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 11px;">
+            <tbody>
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="width: 35%; padding: 4px 10px; font-weight: 700; color: #64748b; background: #f8fafc;">Candidate Name</td>
+                <td style="padding: 4px 10px; font-weight: 800; color: #142850; text-transform: uppercase; font-size: 12px;">
+                  ${record.studentName}
+                </td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 4px 10px; font-weight: 700; color: #64748b; background: #f8fafc;">School &amp; Board</td>
+                <td style="padding: 4px 10px; font-weight: 600; color: #1e293b;">
+                  ${record.schoolName} (${record.board})
+                </td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 4px 10px; font-weight: 700; color: #64748b; background: #f8fafc;">Student Mobile</td>
+                <td style="padding: 4px 10px; font-family: monospace; font-weight: 600; color: #1e293b;">
+                  +91 ${record.studentMobile}
+                </td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 4px 10px; font-weight: 700; color: #64748b; background: #f8fafc;">Parent Mobile</td>
+                <td style="padding: 4px 10px; font-family: monospace; font-weight: 600; color: #1e293b;">
+                  +91 ${record.parentMobile}
+                </td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 4px 10px; font-weight: 700; color: #64748b; background: #f8fafc;">Date of Examination</td>
+                <td style="padding: 4px 10px; font-weight: 800; color: #142850;">
+                  ${record.examDate}
+                </td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 4px 10px; font-weight: 700; color: #64748b; background: #f8fafc;">Reporting Time</td>
+                <td style="padding: 4px 10px; font-weight: 800; color: #b45309;">
+                  10:30 AM (Sharp)
+                </td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 4px 10px; font-weight: 700; color: #64748b; background: #f8fafc;">Examination Timing</td>
+                <td style="padding: 4px 10px; font-weight: 600; color: #1e293b;">
+                  11:00 AM – 1:00 PM (Duration: 2 Hours)
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 4px 10px; font-weight: 700; color: #64748b; background: #f8fafc;">Examination Venue</td>
+                <td style="padding: 4px 10px; font-weight: 600; color: #1e293b;">
+                  Shiksharthi Educational Institute, Kolkata
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Right Photo Box (With User SVG Outline) -->
+        <div style="border: 1px solid #cbd5e1; border-radius: 4px; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center; background: #f8fafc;">
+          <div style="width: 100%; height: 122px; border: 2px dashed #94a3b8; border-radius: 4px; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px; box-sizing: border-box;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.35; margin-bottom: 4px;"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span style="font-size: 8.5px; color: #64748b; line-height: 1.25; display: block;">AFFIX RECENT<br>PASSPORT SIZE<br>PHOTOGRAPH</span>
+            <span style="font-size: 7.5px; color: #94a3b8; margin-top: 3px; display: block;">(Self-Attested)</span>
+          </div>
+          <div style="font-size: 8px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-top: 4px;">
+            Candidate Photo
+          </div>
+        </div>
+      </div>
+
+      <!-- Signatures Row (With ShieldCheck SVG) -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 8px 0; padding-top: 6px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 10px; position: relative; z-index: 2;">
+        <div style="border: 1px solid #e2e8f0; border-radius: 4px; padding: 5px;">
+          <div style="height: 36px; display: flex; align-items: flex-end; justify-content: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 2px;">
+            <span style="font-family: monospace; font-size: 8.5px; color: #94a3b8;">Sign here during exam</span>
+          </div>
+          <span style="font-weight: 600; color: #334155; display: block; margin-top: 4px;">Candidate's Signature</span>
+        </div>
+        <div style="border: 1px solid #e2e8f0; border-radius: 4px; padding: 5px;">
+          <div style="height: 36px; display: flex; align-items: flex-end; justify-content: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 2px;"></div>
+          <span style="font-weight: 600; color: #334155; display: block; margin-top: 4px;">Invigilator's Signature</span>
+        </div>
+        <div style="border: 1px solid #e2e8f0; border-radius: 4px; padding: 5px; background: #f8fafc;">
+          <div style="height: 36px; display: flex; align-items: center; justify-content: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 2px; gap: 4px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+            <span style="font-size: 8.5px; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.5px;">Verified &amp; Authorized</span>
+          </div>
+          <span style="font-weight: 600; color: #334155; display: block; margin-top: 4px;">Controller of Examinations</span>
+        </div>
+      </div>
+
+      <!-- Examination Instructions Section -->
+      <div style="border-top: 2px solid #0f172a; padding-top: 6px; margin-top: 6px; position: relative; z-index: 2;">
+        <h4 style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; color: #142850; margin: 0 0 4px 0;">
+          Important Instructions for Candidates
+        </h4>
+        <ol style="margin: 0; padding-left: 14px; font-size: 9.5px; color: #334155; line-height: 1.32;">
+          <li style="margin-bottom: 2px;">
+            <strong>Mandatory Entry Pass:</strong> Candidates must bring this printed Admit Card along with their original School Identity Card or Aadhaar Card.
+          </li>
+          <li style="margin-bottom: 2px;">
+            <strong>Reporting Time:</strong> Report to the examination venue by <strong>10:30 AM</strong>. Entry gates close at 10:55 AM. No candidate will be allowed after 11:15 AM.
+          </li>
+          <li style="margin-bottom: 2px;">
+            <strong>Permitted Stationery:</strong> Use only <strong>Blue or Black ballpoint pens</strong>. Rough sheets will be provided in the examination hall.
+          </li>
+          <li style="margin-bottom: 2px;">
+            <strong>Prohibited Items:</strong> Mobile phones, smartwatches, calculators, and electronic gadgets are strictly banned inside the hall.
+          </li>
+          <li style="margin-bottom: 2px;">
+            <strong>Scholarships:</strong> Top 100 students receive scholarship opportunities; top 10 receive <strong>₹1,00,000 scholarship</strong> awards.
+          </li>
+        </ol>
+      </div>
+
+      <!-- Footer Helpline -->
+      <div style="margin-top: 8px; padding-top: 5px; border-top: 1px solid #cbd5e1; text-align: center; font-size: 9px; color: #64748b; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; position: relative; z-index: 2;">
+        <span>Helpline: <strong style="color: #334155;">+91 9836269291</strong></span>
+        <span>Email: <strong style="color: #334155;">shiksharthi.edu.institute@gmail.com</strong></span>
+        <span>Website: <strong style="color: #334155;">www.shiksharthi.org</strong></span>
+        <span style="font-style: italic; color: #94a3b8;">Valid only for SSAT 2026 Examination</span>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Builds the standalone page for popup printing.
+ */
+export function buildAdmitCardHTML(record: SSATRegistrationRecord, isStandaloneWindow = false): string {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,8 +395,6 @@ export function buildAdmitCardHTML(record: SSATRegistrationRecord, isStandaloneW
       background: #ffffff;
       color: #0f172a;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      font-size: 11px;
-      line-height: 1.32;
     }
     .print-controls {
       display: ${isStandaloneWindow ? "flex" : "none"};
@@ -68,240 +418,17 @@ export function buildAdmitCardHTML(record: SSATRegistrationRecord, isStandaloneW
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      transition: all 0.2s;
     }
-    .btn-primary {
-      background: #142850;
-      color: #ffffff;
-    }
-    .btn-primary:hover {
-      background: #0f1f3d;
-    }
-    .btn-secondary {
-      background: #e2e8f0;
-      color: #1e293b;
-    }
-    .btn-secondary:hover {
-      background: #cbd5e1;
-    }
+    .btn-primary { background: #142850; color: #ffffff; }
+    .btn-secondary { background: #e2e8f0; color: #1e293b; }
     @media print {
-      .print-controls {
-        display: none !important;
-      }
+      .print-controls { display: none !important; }
     }
     .card-wrap {
       width: 100%;
       max-width: 760px;
       margin: ${isStandaloneWindow ? "14px auto" : "0 auto"};
       background: #ffffff;
-    }
-    .admit-card {
-      border: 2px solid #0f172a;
-      border-radius: 6px;
-      padding: 12px 16px 10px 16px;
-      background: #ffffff;
-      position: relative;
-    }
-    .header {
-      border-bottom: 2px solid #0f172a;
-      padding-bottom: 8px;
-      text-align: center;
-    }
-    .logo {
-      height: 52px;
-      max-width: 280px;
-      object-fit: contain;
-      display: block;
-      margin: 0 auto 4px auto;
-    }
-    .inst-title {
-      font-size: 16px;
-      font-weight: 800;
-      color: #142850;
-      text-transform: uppercase;
-      margin: 0;
-      letter-spacing: 0.5px;
-    }
-    .inst-sub {
-      font-size: 9.5px;
-      font-weight: 600;
-      color: #475569;
-      margin: 2px 0 6px 0;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-    }
-    .exam-badge {
-      border: 1.5px solid #142850;
-      background-color: #f8fafc;
-      padding: 5px 16px;
-      border-radius: 4px;
-      display: inline-block;
-      margin-top: 5px;
-      text-align: center;
-    }
-    .exam-title {
-      font-size: 12px;
-      font-weight: 800;
-      color: #142850;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      line-height: 1.3;
-    }
-    .exam-sub {
-      font-size: 9.5px;
-      font-weight: 700;
-      color: #b45309;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      margin-top: 2px;
-      line-height: 1.2;
-    }
-    .hall-bar {
-      margin: 8px 0;
-      padding: 6px 12px;
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
-      border-radius: 4px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-    }
-    .roll-num {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 14px;
-      font-weight: 800;
-      color: #142850;
-      letter-spacing: 1px;
-    }
-    .details-grid {
-      display: grid;
-      grid-template-columns: 3.2fr 1fr;
-      gap: 12px;
-      margin: 8px 0;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      border: 1px solid #cbd5e1;
-      font-size: 11px;
-    }
-    td {
-      padding: 4px 8px;
-      border-bottom: 1px solid #e2e8f0;
-      vertical-align: middle;
-    }
-    tr:last-child td {
-      border-bottom: none;
-    }
-    .td-label {
-      width: 35%;
-      font-weight: 700;
-      color: #64748b;
-      background: #f8fafc;
-      font-size: 10.5px;
-    }
-    .td-val {
-      color: #0f172a;
-      font-weight: 600;
-    }
-    .td-val-hl {
-      color: #142850;
-      font-weight: 800;
-      text-transform: uppercase;
-      font-size: 12px;
-    }
-    .photo-box {
-      border: 1px solid #cbd5e1;
-      border-radius: 4px;
-      background: #f8fafc;
-      padding: 6px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      text-align: center;
-    }
-    .photo-dashed {
-      width: 100%;
-      height: 122px;
-      border: 2px dashed #94a3b8;
-      border-radius: 4px;
-      background: #ffffff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 8.5px;
-      color: #94a3b8;
-      padding: 4px;
-      line-height: 1.3;
-    }
-    .photo-label {
-      font-size: 8px;
-      font-weight: 700;
-      color: #64748b;
-      text-transform: uppercase;
-      margin-top: 4px;
-    }
-    .sign-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
-      margin: 8px 0;
-      padding-top: 6px;
-      border-top: 1px solid #e2e8f0;
-      text-align: center;
-      font-size: 10px;
-    }
-    .sign-box {
-      border: 1px solid #e2e8f0;
-      border-radius: 4px;
-      padding: 5px;
-    }
-    .sign-space {
-      height: 36px;
-      border-bottom: 1px dashed #cbd5e1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 8.5px;
-      color: #94a3b8;
-      font-family: monospace;
-    }
-    .rules-sec {
-      border-top: 2px solid #0f172a;
-      padding-top: 6px;
-      margin-top: 6px;
-    }
-    .rules-title {
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      color: #142850;
-      margin: 0 0 4px 0;
-      letter-spacing: 0.4px;
-    }
-    ol {
-      margin: 0;
-      padding-left: 14px;
-      font-size: 9.5px;
-      color: #334155;
-      line-height: 1.32;
-    }
-    li {
-      margin-bottom: 2.5px;
-    }
-    .footer {
-      border-top: 1px solid #cbd5e1;
-      margin-top: 8px;
-      padding-top: 6px;
-      display: flex;
-      justify-content: space-between;
-      font-size: 9px;
-      color: #64748b;
-      flex-wrap: wrap;
-      gap: 4px;
     }
   </style>
 </head>
@@ -315,375 +442,8 @@ export function buildAdmitCardHTML(record: SSATRegistrationRecord, isStandaloneW
       : ""
   }
   <div class="card-wrap">
-    <div class="admit-card" id="print-admit-card-inner">
-      <!-- Institute Header -->
-      <div class="header">
-        <img src="${logo}" class="logo" alt="Shiksharthi Logo" />
-        <h1 class="inst-title">Shiksharthi Educational Institute</h1>
-        <p class="inst-sub">Premier Institute for IIT-JEE, NEET &amp; Foundation | Kolkata, West Bengal</p>
-        <div class="exam-badge">
-          <div class="exam-title">SHIKSHARTHI SCHOLARSHIP ADMISSION TEST (SSAT 2026)</div>
-          <div class="exam-sub">★ OFFICIAL PROVISIONAL ADMIT CARD &amp; HALL TICKET ★</div>
-        </div>
-      </div>
-
-      <!-- Hall Ticket Number Bar -->
-      <div class="hall-bar">
-        <div>
-          <span style="font-weight:700;color:#64748b;text-transform:uppercase;font-size:9.5px;">Roll / Admit No: </span>
-          <span class="roll-num">${record.regId}</span>
-        </div>
-        <div>
-          <span>Class: <strong>10 (Science)</strong></span> &nbsp;•&nbsp; <span>Exam Mode: <strong>Offline (OMR)</strong></span>
-        </div>
-      </div>
-
-      <!-- Details & Photo Grid -->
-      <div class="details-grid">
-        <table>
-          <tbody>
-            <tr>
-              <td class="td-label">Candidate Name</td>
-              <td class="td-val-hl">${record.studentName}</td>
-            </tr>
-            <tr>
-              <td class="td-label">School &amp; Board</td>
-              <td class="td-val">${record.schoolName} (${record.board})</td>
-            </tr>
-            <tr>
-              <td class="td-label">Student Mobile</td>
-              <td class="td-val" style="font-family:monospace;">+91 ${record.studentMobile}</td>
-            </tr>
-            <tr>
-              <td class="td-label">Parent Mobile</td>
-              <td class="td-val" style="font-family:monospace;">+91 ${record.parentMobile}</td>
-            </tr>
-            <tr>
-              <td class="td-label">Date of Exam</td>
-              <td class="td-val" style="color:#142850;font-weight:800;">${record.examDate}</td>
-            </tr>
-            <tr>
-              <td class="td-label">Reporting Time</td>
-              <td class="td-val" style="color:#b45309;font-weight:800;">10:30 AM (Sharp)</td>
-            </tr>
-            <tr>
-              <td class="td-label">Exam Timing</td>
-              <td class="td-val">11:00 AM – 1:00 PM (Duration: 2 Hours)</td>
-            </tr>
-            <tr>
-              <td class="td-label">Exam Venue</td>
-              <td class="td-val">Shiksharthi Educational Institute, Kolkata</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <!-- Candidate Photo Box -->
-        <div class="photo-box">
-          <div class="photo-dashed">
-            <span>AFFIX RECENT<br>PASSPORT SIZE<br>PHOTOGRAPH</span>
-            <span style="font-size:7.5px;color:#94a3b8;margin-top:4px;">(Self-Attested)</span>
-          </div>
-          <div class="photo-label">Candidate Photo</div>
-        </div>
-      </div>
-
-      <!-- Signatures Row -->
-      <div class="sign-row">
-        <div class="sign-box">
-          <div class="sign-space">Sign here during exam</div>
-          <span style="font-weight:700;color:#334155;">Candidate's Signature</span>
-        </div>
-        <div class="sign-box">
-          <div class="sign-space"></div>
-          <span style="font-weight:700;color:#334155;">Invigilator's Signature</span>
-        </div>
-        <div class="sign-box" style="background:#f8fafc;">
-          <div class="sign-space" style="font-weight:800;color:#047857;text-transform:uppercase;font-size:8.5px;">
-            ✓ Authorized &amp; Verified
-          </div>
-          <span style="font-weight:700;color:#334155;">Controller of Examinations</span>
-        </div>
-      </div>
-
-      <!-- Exam Instructions -->
-      <div class="rules-sec">
-        <div class="rules-title">Important Instructions for Candidates</div>
-        <ol>
-          <li><strong>Mandatory Entry Pass:</strong> Candidate must present this printed Admit Card along with original School ID Card or Aadhaar Card at the venue.</li>
-          <li><strong>Reporting Time:</strong> Report to the exam venue by <strong>10:30 AM</strong>. Entry gates close at 10:55 AM. No candidate permitted after 11:15 AM.</li>
-          <li><strong>Permitted Stationery:</strong> Use only <strong>Blue or Black ballpoint pens</strong>. Rough work sheets will be provided in the hall.</li>
-          <li><strong>Prohibited Items:</strong> Mobile phones, calculators, smartwatches, and electronic gadgets are strictly banned inside the hall.</li>
-          <li><strong>Scholarships:</strong> Top 100 students will receive merit scholarships; Top 10 rankers receive <strong>₹1,00,000 scholarship</strong> awards.</li>
-        </ol>
-      </div>
-
-      <!-- Footer Info -->
-      <div class="footer">
-        <span>Helpline: <strong>+91 9836269291</strong></span>
-        <span>Email: <strong>shiksharthi.edu.institute@gmail.com</strong></span>
-        <span>Website: <strong>www.shiksharthi.org</strong></span>
-        <span style="font-style:italic;">Valid only for SSAT 2026 Examination</span>
-      </div>
-    </div>
+    ${buildAdmitCardCardBodyHTML(record)}
   </div>
 </body>
 </html>`;
-}
-
-/**
- * Generates and automatically downloads a crisp, 1-page A4 PDF file of the Admit Card.
- * Works seamlessly on mobile devices (Android Chrome, iOS Safari), tablets, and desktops.
- * Triggers native browser download without requiring a printer.
- */
-export async function downloadAdmitCardPDF(record: SSATRegistrationRecord): Promise<void> {
-  // Create an off-screen container with standard A4 desktop width (794px ~ A4 at 96 DPI)
-  // This guarantees uniform, razor-sharp rendering regardless of device screen width
-  const container = document.createElement("div");
-  container.id = "ssat-admit-card-pdf-render";
-  container.style.position = "fixed";
-  container.style.top = "0";
-  container.style.left = "-9999px";
-  container.style.width = "794px";
-  container.style.maxWidth = "794px";
-  container.style.minWidth = "794px";
-  container.style.background = "#ffffff";
-  container.style.color = "#0f172a";
-  container.style.zIndex = "-9999";
-  container.style.boxSizing = "border-box";
-  container.style.padding = "16px";
-  container.style.opacity = "1";
-  container.style.visibility = "visible";
-  container.style.pointerEvents = "none";
-
-  // Build the clean admit card HTML
-  container.innerHTML = `
-    <div style="width: 100%; background: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; line-height: 1.32;">
-      <div style="border: 2px solid #0f172a; border-radius: 6px; padding: 14px 18px 12px 18px; background: #ffffff;">
-        
-        <!-- Header -->
-        <div style="border-bottom: 2px solid #0f172a; padding-bottom: 8px; text-align: center;">
-          <img src="${SHIKSHARTHI_LOGO_BASE64}" style="height: 54px; max-width: 280px; object-fit: contain; display: block; margin: 0 auto 4px auto;" alt="Logo" />
-          <h1 style="font-size: 17px; font-weight: 800; color: #142850; text-transform: uppercase; margin: 0; letter-spacing: 0.5px;">Shiksharthi Educational Institute</h1>
-          <p style="font-size: 10px; font-weight: 600; color: #475569; margin: 2px 0 6px 0; text-transform: uppercase; letter-spacing: 0.4px;">Premier Institute for IIT-JEE, NEET &amp; Foundation | Kolkata, West Bengal</p>
-          <div style="margin-top: 5px; border: 1.5px solid #142850; background-color: #f8fafc; padding: 5px 18px; border-radius: 4px; display: inline-block; text-align: center;">
-            <div style="font-size: 12px; font-weight: 800; color: #142850; letter-spacing: 0.5px; text-transform: uppercase; margin: 0; line-height: 1.3;">SHIKSHARTHI SCHOLARSHIP ADMISSION TEST (SSAT 2026)</div>
-            <div style="font-size: 9.5px; font-weight: 700; color: #b45309; letter-spacing: 0.8px; text-transform: uppercase; margin-top: 2px; line-height: 1.2;">★ OFFICIAL PROVISIONAL ADMIT CARD &amp; HALL TICKET ★</div>
-          </div>
-        </div>
-
-        <!-- Hall Bar -->
-        <div style="margin: 8px 0; padding: 6px 12px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
-          <div>
-            <span style="font-weight:700; color:#64748b; text-transform:uppercase; font-size:10px;">Roll / Admit No: </span>
-            <span style="font-family: monospace; font-size: 14px; font-weight: 800; color: #142850; letter-spacing: 1px;">${record.regId}</span>
-          </div>
-          <div>
-            <span>Class: <strong>10 (Science)</strong></span> &nbsp;•&nbsp; <span>Exam Mode: <strong>Offline (OMR)</strong></span>
-          </div>
-        </div>
-
-        <!-- Details Grid -->
-        <div style="display: grid; grid-template-columns: 3.2fr 1fr; gap: 12px; margin: 8px 0;">
-          <table style="width: 100%; border-collapse: collapse; border: 1px solid #cbd5e1; font-size: 11px;">
-            <tbody>
-              <tr>
-                <td style="width: 35%; font-weight: 700; color: #64748b; background: #f8fafc; padding: 4.5px 8px; border-bottom: 1px solid #e2e8f0;">Candidate Name</td>
-                <td style="color: #142850; font-weight: 800; text-transform: uppercase; font-size: 12.5px; padding: 4.5px 8px; border-bottom: 1px solid #e2e8f0;">${record.studentName}</td>
-              </tr>
-              <tr>
-                <td style="font-weight: 700; color: #64748b; background: #f8fafc; padding: 4.5px 8px; border-bottom: 1px solid #e2e8f0;">School &amp; Board</td>
-                <td style="color: #0f172a; font-weight: 600; padding: 4.5px 8px; border-bottom: 1px solid #e2e8f0;">${record.schoolName} (${record.board})</td>
-              </tr>
-              <tr>
-                <td style="font-weight: 700; color: #64748b; background: #f8fafc; padding: 4.5px 8px; border-bottom: 1px solid #e2e8f0;">Student Mobile</td>
-                <td style="font-family: monospace; color: #0f172a; font-weight: 600; padding: 4.5px 8px; border-bottom: 1px solid #e2e8f0;">+91 ${record.studentMobile}</td>
-              </tr>
-              <tr>
-                <td style="font-weight: 700; color: #64748b; background: #f8fafc; padding: 4.5px 8px; border-bottom: 1px solid #e2e8f0;">Parent Mobile</td>
-                <td style="font-family: monospace; color: #0f172a; font-weight: 600; padding: 4.5px 8px; border-bottom: 1px solid #e2e8f0;">+91 ${record.parentMobile}</td>
-              </tr>
-              <tr>
-                <td style="font-weight: 700; color: #64748b; background: #f8fafc; padding: 4.5px 8px; border-bottom: 1px solid #e2e8f0;">Date of Exam</td>
-                <td style="color: #142850; font-weight: 800; padding: 4.5px 8px; border-bottom: 1px solid #e2e8f0;">${record.examDate}</td>
-              </tr>
-              <tr>
-                <td style="font-weight: 700; color: #64748b; background: #f8fafc; padding: 4.5px 8px; border-bottom: 1px solid #e2e8f0;">Reporting Time</td>
-                <td style="color: #b45309; font-weight: 800; padding: 4.5px 8px; border-bottom: 1px solid #e2e8f0;">10:30 AM (Sharp)</td>
-              </tr>
-              <tr>
-                <td style="font-weight: 700; color: #64748b; background: #f8fafc; padding: 4.5px 8px; border-bottom: 1px solid #e2e8f0;">Exam Timing</td>
-                <td style="color: #0f172a; font-weight: 600; padding: 4.5px 8px; border-bottom: 1px solid #e2e8f0;">11:00 AM – 1:00 PM (Duration: 2 Hours)</td>
-              </tr>
-              <tr>
-                <td style="font-weight: 700; color: #64748b; background: #f8fafc; padding: 4.5px 8px;">Exam Venue</td>
-                <td style="color: #0f172a; font-weight: 600; padding: 4.5px 8px;">Shiksharthi Educational Institute, Kolkata</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <!-- Photo -->
-          <div style="border: 1px solid #cbd5e1; border-radius: 4px; background: #f8fafc; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center;">
-            <div style="width: 100%; height: 124px; border: 2px dashed #94a3b8; border-radius: 4px; background: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 8.5px; color: #94a3b8; padding: 4px; line-height: 1.3;">
-              <span>AFFIX RECENT<br>PASSPORT SIZE<br>PHOTOGRAPH</span>
-              <span style="font-size: 7.5px; color: #94a3b8; margin-top: 4px;">(Self-Attested)</span>
-            </div>
-            <div style="font-size: 8px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-top: 4px;">Candidate Photo</div>
-          </div>
-        </div>
-
-        <!-- Signatures -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 8px 0; padding-top: 6px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 10px;">
-          <div style="border: 1px solid #e2e8f0; border-radius: 4px; padding: 5px;">
-            <div style="height: 36px; border-bottom: 1px dashed #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 8.5px; color: #94a3b8; font-family: monospace;">Sign here during exam</div>
-            <span style="font-weight: 700; color: #334155;">Candidate's Signature</span>
-          </div>
-          <div style="border: 1px solid #e2e8f0; border-radius: 4px; padding: 5px;">
-            <div style="height: 36px; border-bottom: 1px dashed #cbd5e1; display: flex; align-items: center; justify-content: center;"></div>
-            <span style="font-weight: 700; color: #334155;">Invigilator's Signature</span>
-          </div>
-          <div style="border: 1px solid #e2e8f0; border-radius: 4px; padding: 5px; background: #f8fafc;">
-            <div style="height: 36px; border-bottom: 1px dashed #cbd5e1; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #047857; text-transform: uppercase; font-size: 8.5px;">
-              ✓ Authorized &amp; Verified
-            </div>
-            <span style="font-weight: 700; color: #334155;">Controller of Examinations</span>
-          </div>
-        </div>
-
-        <!-- Instructions -->
-        <div style="border-top: 2px solid #0f172a; padding-top: 6px; margin-top: 6px;">
-          <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #142850; margin: 0 0 4px 0; letter-spacing: 0.4px;">Important Instructions for Candidates</div>
-          <ol style="margin: 0; padding-left: 14px; font-size: 9.5px; color: #334155; line-height: 1.32;">
-            <li style="margin-bottom: 2.5px;"><strong>Mandatory Entry Pass:</strong> Candidate must present this printed Admit Card along with original School ID Card or Aadhaar Card at the venue.</li>
-            <li style="margin-bottom: 2.5px;"><strong>Reporting Time:</strong> Report to the exam venue by <strong>10:30 AM</strong>. Entry gates close at 10:55 AM. No candidate permitted after 11:15 AM.</li>
-            <li style="margin-bottom: 2.5px;"><strong>Permitted Stationery:</strong> Use only <strong>Blue or Black ballpoint pens</strong>. Rough work sheets will be provided in the hall.</li>
-            <li style="margin-bottom: 2.5px;"><strong>Prohibited Items:</strong> Mobile phones, calculators, smartwatches, and electronic gadgets are strictly banned inside the hall.</li>
-            <li style="margin-bottom: 2.5px;"><strong>Scholarships:</strong> Top 100 students will receive merit scholarships; Top 10 rankers receive <strong>₹1,00,000 scholarship</strong> awards.</li>
-          </ol>
-        </div>
-
-        <!-- Footer -->
-        <div style="border-top: 1px solid #cbd5e1; margin-top: 8px; padding-top: 6px; display: flex; justify-content: space-between; font-size: 9px; color: #64748b; flex-wrap: wrap; gap: 4px;">
-          <span>Helpline: <strong>+91 9836269291</strong></span>
-          <span>Email: <strong>shiksharthi.edu.institute@gmail.com</strong></span>
-          <span>Website: <strong>www.shiksharthi.org</strong></span>
-          <span style="font-style: italic;">Valid only for SSAT 2026 Examination</span>
-        </div>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(container);
-
-  try {
-    // Wait for any images inside to load
-    const images = Array.from(container.querySelectorAll("img"));
-    await Promise.all(
-      images.map(
-        (img) =>
-          new Promise((resolve) => {
-            if (img.complete) {
-              resolve(true);
-            } else {
-              img.onload = () => resolve(true);
-              img.onerror = () => resolve(true);
-            }
-          })
-      )
-    );
-
-    // Capture with high DPI scale (2x) for crisp typography
-    const canvas = await html2canvas(container, {
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: "#ffffff",
-      logging: false,
-    });
-
-    const imgData = canvas.toDataURL("image/jpeg", 0.98);
-
-    // Create A4 PDF in portrait mode
-    const pdf = new jsPDF({
-      orientation: "portrait",
-      unit: "mm",
-      format: "a4",
-    });
-
-    const pdfWidth = 210; // A4 width in mm
-    const pdfHeight = 297; // A4 height in mm
-
-    // Maintain aspect ratio, leaving a 6mm margin around
-    const targetWidth = pdfWidth - 12; // 198mm
-    const targetHeight = (canvas.height * targetWidth) / canvas.width;
-
-    // Ensure it strictly fits on 1 page (max height 285mm)
-    let renderWidth = targetWidth;
-    let renderHeight = targetHeight;
-    if (renderHeight > 282) {
-      const scale = 282 / renderHeight;
-      renderHeight = 282;
-      renderWidth = renderWidth * scale;
-    }
-
-    const xOffset = (pdfWidth - renderWidth) / 2;
-    const yOffset = 7; // 7mm top margin
-
-    pdf.addImage(imgData, "JPEG", xOffset, yOffset, renderWidth, renderHeight);
-    
-    // Auto download the PDF file to user device
-    pdf.save(`SSAT_2026_Admit_Card_${record.regId}.pdf`);
-  } catch (error) {
-    console.error("PDF generation failed, falling back to window print:", error);
-    printAdmitCardDocument(record);
-  } finally {
-    container.remove();
-  }
-}
-
-/**
- * Universal print handler for the SSAT Admit Card.
- * On mobile devices: Automatically triggers the PDF download directly (so users get the 1-page PDF saved on their phone).
- * On desktop: Opens a dedicated clean print window and triggers window.print().
- */
-export function printAdmitCardDocument(record: SSATRegistrationRecord): void {
-  // Mobile browsers (Chrome Android, iOS Safari) don't have printers hooked up
-  // and print dialogs are flaky or blocked. Auto-downloading the PDF is the ideal mobile flow.
-  if (isMobileDevice()) {
-    downloadAdmitCardPDF(record);
-    return;
-  }
-
-  // On desktop / laptop, open print window
-  const html = buildAdmitCardHTML(record, true);
-  const printWindow = window.open("", "_blank", "width=850,height=1100,scrollbars=yes,resizable=yes");
-
-  if (!printWindow) {
-    // Popup was blocked by browser - fallback to auto-downloading the PDF
-    downloadAdmitCardPDF(record);
-    return;
-  }
-
-  printWindow.document.open();
-  printWindow.document.write(html);
-  printWindow.document.close();
-
-  // Print automatically once loaded
-  printWindow.onload = () => {
-    setTimeout(() => {
-      printWindow.focus();
-      printWindow.print();
-    }, 300);
-  };
-
-  // Fallback in case onload does not fire with document.write
-  setTimeout(() => {
-    if (printWindow && !printWindow.closed) {
-      try {
-        printWindow.focus();
-        printWindow.print();
-      } catch {
-        // Ignored
-      }
-    }
-  }, 1200);
 }
