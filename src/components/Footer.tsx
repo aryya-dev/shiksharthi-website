@@ -1,9 +1,7 @@
 import {
-  GraduationCap,
   Facebook,
   Instagram,
   Youtube,
-  Linkedin,
   MapPin,
 } from "lucide-react";
 import { useAppNavigation } from "@/hooks/useAppNavigation";

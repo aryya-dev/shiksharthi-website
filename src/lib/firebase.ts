@@ -30,7 +30,7 @@ const FIREBASE_CONFIG_STORAGE_KEY = "shiksharthi_firebase_config";
  * Checks environment variables first, then localStorage config.
  */
 export function getFirebaseConfig(): FirebaseConfig | null {
-  const env = (import.meta as any).env || {};
+  const env = (import.meta as unknown as { env?: Record<string, string> }).env || {};
 
   // 1. Check Vite Environment variables
   if (env.VITE_FIREBASE_API_KEY && env.VITE_FIREBASE_PROJECT_ID) {
@@ -117,9 +117,9 @@ export async function saveRegistrationToFirebase(record: SSATRegistrationRecord)
       createdAt: new Date().toISOString(),
     });
     return { success: true };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Firebase save error:", err);
-    return { success: false, error: err.message || "Failed to save to Firestore" };
+    return { success: false, error: err instanceof Error ? err.message : "Failed to save to Firestore" };
   }
 }
 
@@ -152,7 +152,7 @@ export async function fetchRegistrationsFromFirebase(): Promise<SSATRegistration
  */
 export function subscribeToRegistrationsFirebase(
   onUpdate: (records: SSATRegistrationRecord[]) => void,
-  onError?: (err: any) => void
+  onError?: (err: Error) => void
 ): Unsubscribe | null {
   const db = getFirebaseDb();
   if (!db) return null;

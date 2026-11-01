@@ -102,6 +102,7 @@ const AdminPage = () => {
           record.studentName.toLowerCase().includes(query) ||
           record.schoolName.toLowerCase().includes(query) ||
           record.regId.toLowerCase().includes(query) ||
+          (record.streamPreference && record.streamPreference.toLowerCase().includes(query)) ||
           record.studentMobile.includes(query) ||
           record.parentMobile.includes(query) ||
           record.email.toLowerCase().includes(query);
@@ -205,7 +206,9 @@ const AdminPage = () => {
     try {
       const parsed = JSON.parse(input);
       if (parsed.apiKey && parsed.projectId) return parsed;
-    } catch {}
+    } catch {
+      // Fall through to regex extraction
+    }
 
     const extract = (key: string) => {
       const match = input.match(new RegExp(`${key}\\s*:\\s*["']([^"']+)["']`));
@@ -504,7 +507,7 @@ const AdminPage = () => {
               {/* Sort by */}
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
+                onChange={(e) => setSortBy(e.target.value as "NEWEST" | "OLDEST" | "NAME")}
                 className="px-2.5 py-2 text-xs font-medium bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-primary/40"
               >
                 <option value="NEWEST">Newest First</option>
@@ -581,7 +584,7 @@ const AdminPage = () => {
                     <th className="py-3 px-4"># / Reg ID</th>
                     <th className="py-3 px-4">Date & Time</th>
                     <th className="py-3 px-4">Student & School</th>
-                    <th className="py-3 px-4">Board</th>
+                    <th className="py-3 px-4">Board & Target Stream</th>
                     <th className="py-3 px-4">Contact Numbers</th>
                     <th className="py-3 px-4">Exam Date</th>
                     <th className="py-3 px-4 text-right">Actions</th>
@@ -644,15 +647,22 @@ const AdminPage = () => {
                           </div>
                         </td>
 
-                        {/* Board */}
+                        {/* Board & Target Stream */}
                         <td className="py-3 px-4 whitespace-nowrap">
-                          <span
-                            className={`inline-block px-2 py-0.5 text-[11px] font-semibold rounded-md border ${getBoardBadgeClass(
-                              record.board
-                            )}`}
-                          >
-                            {record.board}
-                          </span>
+                          <div className="flex flex-col gap-1 items-start">
+                            <span
+                              className={`inline-block px-2 py-0.5 text-[11px] font-semibold rounded-md border ${getBoardBadgeClass(
+                                record.board
+                              )}`}
+                            >
+                              {record.board}
+                            </span>
+                            {record.streamPreference && (
+                              <span className="inline-block px-2 py-0.5 text-[10px] font-bold rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                                {record.streamPreference}
+                              </span>
+                            )}
+                          </div>
                         </td>
 
                         {/* Contact Numbers */}
@@ -761,6 +771,11 @@ const AdminPage = () => {
                   >
                     {selectedRecord.board}
                   </span>
+                  {selectedRecord.streamPreference && (
+                    <span className="px-2 py-0.5 text-[10px] font-bold rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                      {selectedRecord.streamPreference}
+                    </span>
+                  )}
                 </div>
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-1">
                   {selectedRecord.studentName}
@@ -794,11 +809,17 @@ const AdminPage = () => {
               </div>
 
               {/* Grid Info */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="p-3 rounded-lg bg-slate-50/50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
                   <span className="text-[10px] text-slate-400 uppercase font-semibold">School Name</span>
-                  <p className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
+                  <p className="font-semibold text-slate-800 dark:text-slate-200 mt-0.5 truncate" title={selectedRecord.schoolName}>
                     {selectedRecord.schoolName}
+                  </p>
+                </div>
+                <div className="p-3 rounded-lg bg-slate-50/50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+                  <span className="text-[10px] text-slate-400 uppercase font-semibold">Target Stream</span>
+                  <p className="font-semibold text-purple-700 dark:text-purple-400 mt-0.5">
+                    {selectedRecord.streamPreference || "Not specified"}
                   </p>
                 </div>
                 <div className="p-3 rounded-lg bg-slate-50/50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">

@@ -70,10 +70,10 @@ const SSATHero = () => {
 
             <p className="text-slate-300 text-sm sm:text-base max-w-xl mx-auto lg:mx-0 font-normal leading-relaxed">
               Step into Class 11 with confidence. Compete for{" "}
-              <strong className="text-white font-semibold">₹1 Lakh cash rewards</strong> and merit
-              scholarships in exclusive{" "}
-              <strong className="text-[#eab308] font-bold">25-student batches</strong> for JEE &amp;
-              NEET.
+              <strong className="text-[#eab308] font-bold whitespace-nowrap">₹1 Lakh cash rewards</strong>{" "}
+              and merit scholarships in exclusive{" "}
+              <strong className="text-[#eab308] font-bold whitespace-nowrap">25-student batches</strong>{" "}
+              for JEE &amp; NEET.
             </p>
 
             {/* Quick 3-Key Highlights - Compact on Mobile */}
@@ -90,7 +90,7 @@ const SSATHero = () => {
 
               <div className="bg-white/5 border border-white/10 rounded-xl sm:rounded-2xl p-2.5 sm:p-3 text-center sm:text-left">
                 <div className="text-[10px] sm:text-xs text-white/60">Exam Dates</div>
-                <div className="text-xs sm:text-sm font-black text-emerald-400 mt-0.5">15 &amp; 22 Nov</div>
+                <div className="text-xs sm:text-sm font-black text-emerald-400 mt-0.9">15 &amp; 22 Nov</div>
               </div>
             </div>
 

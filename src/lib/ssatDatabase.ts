@@ -8,6 +8,7 @@ export interface SSATRegistrationRecord {
   studentName: string;
   schoolName: string;
   board: string;
+  streamPreference: string;
   studentMobile: string;
   parentMobile: string;
   email: string;
@@ -24,7 +25,7 @@ const WEBHOOK_KEY = "ssat_google_sheet_webhook_url";
  * Checks environment variable first, then localStorage.
  */
 export function getGoogleSheetWebhookUrl(): string {
-  const envUrl = (import.meta as any).env?.VITE_SSAT_SHEET_URL;
+  const envUrl = (import.meta as unknown as { env?: Record<string, string> }).env?.VITE_SSAT_SHEET_URL;
   if (envUrl && typeof envUrl === "string" && envUrl.trim().length > 0) {
     return envUrl.trim();
   }
@@ -64,9 +65,9 @@ export async function submitToGoogleSheet(record: SSATRegistrationRecord): Promi
       body: JSON.stringify(record),
     });
     return { success: true };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.warn("Failed to sync to Google Sheet:", err);
-    return { success: false, error: err.message || "Network error" };
+    return { success: false, error: err instanceof Error ? err.message : "Network error" };
   }
 }
 
@@ -110,9 +111,9 @@ export async function fetchFromGoogleSheet(): Promise<{ success: boolean; record
       return { success: true, records: getAllRegistrations() };
     }
     return { success: false, error: json.message || "Invalid response format" };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Error fetching from Google Sheet:", err);
-    return { success: false, error: err.message || "Failed to fetch cloud records" };
+    return { success: false, error: err instanceof Error ? err.message : "Failed to fetch cloud records" };
   }
 }
 
@@ -201,6 +202,7 @@ export function exportRegistrationsCSV(): string {
     "Student Name",
     "School Name",
     "Board",
+    "Stream Preference",
     "Student Mobile",
     "Parent Mobile",
     "Email",
@@ -213,6 +215,7 @@ export function exportRegistrationsCSV(): string {
     `"${r.studentName}"`,
     `"${r.schoolName}"`,
     r.board,
+    r.streamPreference || "-",
     r.studentMobile,
     r.parentMobile,
     r.email || "-",
@@ -252,6 +255,7 @@ export function seedSampleRegistrations(): void {
       studentName: "Aarav Mukherjee",
       schoolName: "South Point High School",
       board: "CBSE",
+      streamPreference: "JEE",
       studentMobile: "9830123456",
       parentMobile: "9830987654",
       email: "aarav.mukherjee@gmail.com",
@@ -264,6 +268,7 @@ export function seedSampleRegistrations(): void {
       studentName: "Ananya Sengupta",
       schoolName: "St. Xavier's Collegiate School",
       board: "ICSE",
+      streamPreference: "NEET",
       studentMobile: "9831234567",
       parentMobile: "9831876543",
       email: "ananya.sen@outlook.com",
@@ -276,6 +281,7 @@ export function seedSampleRegistrations(): void {
       studentName: "Debjit Roy",
       schoolName: "Ballygunge Government High School",
       board: "WB Board",
+      streamPreference: "IISER",
       studentMobile: "9832345678",
       parentMobile: "9832765432",
       email: "debjit.roy2010@gmail.com",
@@ -288,6 +294,7 @@ export function seedSampleRegistrations(): void {
       studentName: "Ishita Banerjee",
       schoolName: "Modern High School for Girls",
       board: "ICSE",
+      streamPreference: "SCIENCE-BOARD",
       studentMobile: "9833456789",
       parentMobile: "9833654321",
       email: "ishita.b@gmail.com",
@@ -300,6 +307,7 @@ export function seedSampleRegistrations(): void {
       studentName: "Soumyadeep Chatterjee",
       schoolName: "Delhi Public School, Ruby Park",
       board: "CBSE",
+      streamPreference: "COMMERCE",
       studentMobile: "9834567890",
       parentMobile: "9834543210",
       email: "",

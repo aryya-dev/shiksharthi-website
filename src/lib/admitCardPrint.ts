@@ -259,6 +259,15 @@ function buildAdmitCardCardBodyHTML(record: SSATRegistrationRecord): string {
                   ${record.schoolName} (${record.board})
                 </td>
               </tr>
+              ${record.streamPreference
+      ? `<tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 4px 10px; font-weight: 700; color: #64748b; background: #f8fafc;">Target Stream</td>
+                <td style="padding: 4px 10px; font-weight: 700; color: #142850;">
+                  ${record.streamPreference}
+                </td>
+              </tr>`
+      : ""
+    }
               <tr style="border-bottom: 1px solid #e2e8f0;">
                 <td style="padding: 4px 10px; font-weight: 700; color: #64748b; background: #f8fafc;">Student Mobile</td>
                 <td style="padding: 4px 10px; font-family: monospace; font-weight: 600; color: #1e293b;">
@@ -286,7 +295,7 @@ function buildAdmitCardCardBodyHTML(record: SSATRegistrationRecord): string {
               <tr style="border-bottom: 1px solid #e2e8f0;">
                 <td style="padding: 4px 10px; font-weight: 700; color: #64748b; background: #f8fafc;">Examination Timing</td>
                 <td style="padding: 4px 10px; font-weight: 600; color: #1e293b;">
-                  3:30 PM - 6:15 PM
+                  3:45 PM - 5:45 PM
                 </td>
               </tr>
               <tr>
@@ -433,14 +442,13 @@ export function buildAdmitCardHTML(record: SSATRegistrationRecord, isStandaloneW
   </style>
 </head>
 <body>
-  ${
-    isStandaloneWindow
+  ${isStandaloneWindow
       ? `<div class="print-controls">
            <button class="btn btn-primary" onclick="window.print()">🖨️ Print Admit Card</button>
            <button class="btn btn-secondary" onclick="window.close()">✕ Close</button>
          </div>`
       : ""
-  }
+    }
   <div class="card-wrap">
     ${buildAdmitCardCardBodyHTML(record)}
   </div>

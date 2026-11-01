@@ -1,4 +1,5 @@
 import { Trophy, ChevronLeft, ChevronRight } from "lucide-react";
+import type { Swiper as SwiperCore } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import { useRef } from "react";
@@ -117,7 +118,7 @@ const AchieversSection = ({
   showButton = true,
   compact = false,
 }: AchieversSectionProps) => {
-  const swiperRef = useRef<any>(null);
+  const swiperRef = useRef<SwiperCore | null>(null);
 
   return (
     <section

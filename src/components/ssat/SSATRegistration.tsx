@@ -28,12 +28,22 @@ import {
 } from "lucide-react";
 
 type Board = "CBSE" | "ICSE" | "";
+type StreamPreference =
+  | "JEE"
+  | "NEET"
+  | "IISER"
+  | "SCIENCE-BOARD"
+  | "COMMERCE"
+  | "ARTS"
+  | "OTHERS"
+  | "";
 type ExamDate = "15 November 2026" | "22 November 2026" | "";
 
 interface FormData {
   studentName: string;
   schoolName: string;
   board: Board;
+  streamPreference: StreamPreference;
   studentMobile: string;
   parentMobile: string;
   email: string;
@@ -45,6 +55,7 @@ interface FormErrors {
   studentName?: string;
   schoolName?: string;
   board?: string;
+  streamPreference?: string;
   studentMobile?: string;
   parentMobile?: string;
   email?: string;
@@ -53,6 +64,15 @@ interface FormErrors {
 }
 
 const BOARDS: Board[] = ["CBSE", "ICSE"];
+const STREAM_OPTIONS: { value: StreamPreference; label: string }[] = [
+  { value: "JEE", label: "JEE" },
+  { value: "NEET", label: "NEET" },
+  { value: "IISER", label: "IISER" },
+  { value: "SCIENCE-BOARD", label: "SCIENCE-BOARD" },
+  { value: "COMMERCE", label: "COMMERCE" },
+  { value: "ARTS", label: "ARTS" },
+  { value: "OTHERS", label: "OTHERS" },
+];
 const EXAM_DATES: { date: ExamDate; day: string; time: string; badge: string; seats: string }[] = [
   {
     date: "15 November 2026",
@@ -96,6 +116,7 @@ const SSATRegistration = () => {
     studentName: "",
     schoolName: "",
     board: "",
+    streamPreference: "",
     studentMobile: "",
     parentMobile: "",
     email: "",
@@ -109,6 +130,7 @@ const SSATRegistration = () => {
     studentName: string;
     schoolName: string;
     board: string;
+    streamPreference: string;
     studentMobile: string;
     parentMobile: string;
     email: string;
@@ -119,7 +141,7 @@ const SSATRegistration = () => {
   // Track completed sections for the progress bar
   const completedSections = useMemo(() => {
     const done: boolean[] = [
-      !!(form.studentName.trim() && form.schoolName.trim() && form.board),
+      !!(form.studentName.trim() && form.schoolName.trim() && form.board && form.streamPreference),
       !!(form.studentMobile.trim() && form.parentMobile.trim()),
       !!form.examDate,
       form.consent,
@@ -134,6 +156,7 @@ const SSATRegistration = () => {
     if (!form.studentName.trim()) e.studentName = "Please enter student's full name.";
     if (!form.schoolName.trim()) e.schoolName = "Please enter current school name.";
     if (!form.board) e.board = "Please select your educational board.";
+    if (!form.streamPreference) e.streamPreference = "Please select what the student wishes to study for.";
     if (!form.studentMobile.trim()) {
       e.studentMobile = "Student mobile number is required.";
     } else if (!validateMobile(form.studentMobile)) {
@@ -183,6 +206,7 @@ const SSATRegistration = () => {
       studentName: form.studentName,
       schoolName: form.schoolName,
       board: form.board,
+      streamPreference: form.streamPreference,
       studentMobile: form.studentMobile,
       parentMobile: form.parentMobile,
       email: form.email,
@@ -196,6 +220,7 @@ const SSATRegistration = () => {
       studentName: form.studentName,
       schoolName: form.schoolName,
       board: form.board,
+      streamPreference: form.streamPreference,
       studentMobile: form.studentMobile,
       parentMobile: form.parentMobile,
       email: form.email,
@@ -224,6 +249,7 @@ const SSATRegistration = () => {
       studentName: "",
       schoolName: "",
       board: "",
+      streamPreference: "",
       studentMobile: "",
       parentMobile: "",
       email: "",
@@ -244,6 +270,7 @@ const SSATRegistration = () => {
         studentName: success.studentName,
         schoolName: success.schoolName,
         board: success.board,
+        streamPreference: success.streamPreference,
         studentMobile: success.studentMobile,
         parentMobile: success.parentMobile,
         email: success.email,
@@ -266,6 +293,7 @@ const SSATRegistration = () => {
       studentName: success.studentName,
       schoolName: success.schoolName,
       board: success.board,
+      streamPreference: success.streamPreference,
       studentMobile: success.studentMobile,
       parentMobile: success.parentMobile,
       email: success.email,
@@ -416,6 +444,14 @@ const SSATRegistration = () => {
                         {success.schoolName} ({success.board})
                       </td>
                     </tr>
+                    {success.streamPreference && (
+                      <tr className="border-b border-slate-200">
+                        <td className="py-1 px-2.5 font-bold text-slate-500 bg-slate-50/80">Target Stream</td>
+                        <td className="py-1 px-2.5 font-extrabold text-[#142850]">
+                          {success.streamPreference}
+                        </td>
+                      </tr>
+                    )}
                     <tr className="border-b border-slate-200">
                       <td className="py-1 px-2.5 font-bold text-slate-500 bg-slate-50/80">Student Mobile</td>
                       <td className="py-1 px-2.5 font-mono font-semibold text-slate-800">
@@ -443,7 +479,7 @@ const SSATRegistration = () => {
                     <tr className="border-b border-slate-200">
                       <td className="py-1 px-2.5 font-bold text-slate-500 bg-slate-50/80">Examination Timing</td>
                       <td className="py-1 px-2.5 font-semibold text-slate-800">
-                        3:30 PM - 6:15 PM
+                        3:45 PM - 5:45 PM
                       </td>
                     </tr>
                     <tr>
@@ -594,8 +630,8 @@ const SSATRegistration = () => {
                     <div className="flex flex-col items-center gap-1.5">
                       <div
                         className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all duration-300 ${isComplete
-                            ? "bg-emerald-500 text-white shadow-md shadow-emerald-500/25"
-                            : "bg-slate-100 text-slate-400 border border-slate-200"
+                          ? "bg-emerald-500 text-white shadow-md shadow-emerald-500/25"
+                          : "bg-slate-100 text-slate-400 border border-slate-200"
                           }`}
                       >
                         {isComplete ? (
@@ -743,6 +779,44 @@ const SSATRegistration = () => {
                     </p>
                   )}
                 </div>
+              </div>
+
+              {/* What the student wishes to study for */}
+              <div id="ssat-field-streamPreference">
+                <label
+                  htmlFor="ssat-input-streamPreference"
+                  className="block text-xs sm:text-sm font-semibold text-slate-800 mb-1.5"
+                >
+                  What the student wishes to study for <span className="text-red-500">*</span>
+                </label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#eab308] transition-colors">
+                    <GraduationCap size={16} />
+                  </div>
+                  <select
+                    id="ssat-input-streamPreference"
+                    value={form.streamPreference}
+                    onChange={(e) => handleChange("streamPreference", e.target.value as StreamPreference)}
+                    className={`w-full h-11 sm:h-12 pl-10 pr-8 rounded-xl text-sm sm:text-base bg-slate-50/60 border text-slate-800 outline-none transition-all appearance-none cursor-pointer focus:bg-white focus:ring-2 focus:ring-[#eab308]/30 focus:border-[#eab308] ${errors.streamPreference ? "border-red-400" : "border-slate-200"
+                      }`}
+                  >
+                    <option value="">Select target stream / aspiration</option>
+                    {STREAM_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
+                    <ChevronDown size={16} />
+                  </div>
+                </div>
+                {errors.streamPreference && (
+                  <p className="flex items-center gap-1 text-red-500 text-xs mt-1.5 font-medium">
+                    <AlertCircle size={12} />
+                    {errors.streamPreference}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -906,24 +980,24 @@ const SSATRegistration = () => {
                       id={`ssat-date-btn-${item.date.replace(/\s/g, "-")}`}
                       onClick={() => handleChange("examDate", item.date)}
                       className={`relative p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 cursor-pointer transition-all duration-200 select-none group ${isSelected
-                          ? "border-[#eab308] bg-gradient-to-br from-amber-500/5 to-amber-400/10 shadow-lg shadow-amber-500/10 ring-1 ring-[#eab308]/40"
-                          : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50 hover:shadow-md"
+                        ? "border-[#eab308] bg-gradient-to-br from-amber-500/5 to-amber-400/10 shadow-lg shadow-amber-500/10 ring-1 ring-[#eab308]/40"
+                        : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50 hover:shadow-md"
                         }`}
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex items-center gap-2">
                           <span
                             className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${isSelected
-                                ? "bg-[#142850] text-[#eab308]"
-                                : "bg-slate-100 text-slate-600"
+                              ? "bg-[#142850] text-[#eab308]"
+                              : "bg-slate-100 text-slate-600"
                               }`}
                           >
                             {item.badge}
                           </span>
                           <span
                             className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${item.seats === "Filling Fast"
-                                ? "bg-orange-100 text-orange-700"
-                                : "bg-emerald-50 text-emerald-700"
+                              ? "bg-orange-100 text-orange-700"
+                              : "bg-emerald-50 text-emerald-700"
                               }`}
                           >
                             {item.seats}
@@ -931,8 +1005,8 @@ const SSATRegistration = () => {
                         </div>
                         <div
                           className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${isSelected
-                              ? "border-[#eab308] bg-[#eab308] scale-110"
-                              : "border-slate-300 bg-white group-hover:border-slate-400"
+                            ? "border-[#eab308] bg-[#eab308] scale-110"
+                            : "border-slate-300 bg-white group-hover:border-slate-400"
                             }`}
                         >
                           {isSelected && <Check size={12} className="text-slate-900 stroke-[3]" />}
@@ -1001,18 +1075,18 @@ const SSATRegistration = () => {
                   }
                 }}
                 className={`p-4 sm:p-5 rounded-xl sm:rounded-2xl border-2 transition-all duration-200 cursor-pointer select-none flex items-start gap-3.5 ${form.consent
-                    ? "bg-emerald-50/50 border-emerald-400/70 shadow-md shadow-emerald-500/10"
-                    : errors.consent
-                      ? "bg-red-50/40 border-red-300 shadow-sm shadow-red-500/5"
-                      : "bg-slate-50/60 border-slate-200 hover:bg-slate-100/50 hover:border-slate-300"
+                  ? "bg-emerald-50/50 border-emerald-400/70 shadow-md shadow-emerald-500/10"
+                  : errors.consent
+                    ? "bg-red-50/40 border-red-300 shadow-sm shadow-red-500/5"
+                    : "bg-slate-50/60 border-slate-200 hover:bg-slate-100/50 hover:border-slate-300"
                   }`}
               >
                 <div
                   className={`mt-0.5 w-6 h-6 rounded-lg border-2 shrink-0 flex items-center justify-center transition-all duration-200 ${form.consent
-                      ? "bg-emerald-500 border-emerald-500 scale-105"
-                      : errors.consent
-                        ? "border-red-400 bg-white"
-                        : "border-slate-300 bg-white"
+                    ? "bg-emerald-500 border-emerald-500 scale-105"
+                    : errors.consent
+                      ? "border-red-400 bg-white"
+                      : "border-slate-300 bg-white"
                     }`}
                 >
                   {form.consent && <Check size={14} className="text-white stroke-[3]" />}
@@ -1041,8 +1115,8 @@ const SSATRegistration = () => {
                 type="submit"
                 disabled={submitting}
                 className={`w-full h-12 sm:h-14 text-sm sm:text-base font-bold rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all cursor-pointer border-0 ${completedCount === 4
-                    ? "text-slate-950 bg-gradient-to-r from-[#eab308] via-amber-400 to-[#d4a307] hover:brightness-105 active:scale-[0.99]"
-                    : "text-slate-950 bg-gradient-to-r from-[#eab308] via-amber-400 to-[#d4a307] hover:brightness-105 active:scale-[0.99]"
+                  ? "text-slate-950 bg-gradient-to-r from-[#eab308] via-amber-400 to-[#d4a307] hover:brightness-105 active:scale-[0.99]"
+                  : "text-slate-950 bg-gradient-to-r from-[#eab308] via-amber-400 to-[#d4a307] hover:brightness-105 active:scale-[0.99]"
                   }`}
               >
                 {submitting ? (

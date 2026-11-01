@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 const SSATAbout = () => {
-  const [activeTrack, setActiveTrack] = useState<"jee" | "neet">("jee");
+  const [activeTrack, setActiveTrack] = useState<"jee" | "neet" | "iiser">("jee");
 
   return (
     <section id="ssat-about" className="py-12 sm:py-16 lg:py-24 bg-slate-50 relative overflow-hidden">
@@ -48,7 +48,7 @@ const SSATAbout = () => {
                 <span>Strict Batch Ceiling</span>
               </div>
               <h3 className="text-lg sm:text-2xl font-black text-white tracking-tight">
-                Small Batches of <span className="text-[#eab308]">25 Students</span> for JEE &amp; NEET
+                Small Batches of <span className="text-[#eab308]">25 Students</span> for JEE, NEET &amp; IISER
               </h3>
               <p className="text-slate-300 text-xs sm:text-sm max-w-2xl leading-normal">
                 No 100+ crowd factories. Strict cap of 25 students guarantees direct faculty access,
@@ -69,7 +69,7 @@ const SSATAbout = () => {
         <div className="mb-10 sm:mb-14">
           <div className="text-center mb-5 sm:mb-8">
             <h3 className="text-xl sm:text-3xl font-black text-[#142850]">
-              Integrated 3-in-1 Curriculum Combos
+              Integrated Curriculum Combos
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm mt-1">
               Zero conflict between School Boards and Competitive rank-building.
@@ -78,41 +78,49 @@ const SSATAbout = () => {
 
           {/* Mobile Interactive Tab Switcher (Fits in One Screen on Mobile) */}
           <div className="flex md:hidden justify-center mb-4">
-            <div className="inline-flex p-1 bg-slate-200/90 rounded-xl border border-slate-300/80 w-full max-w-xs shadow-inner">
+            <div className="inline-flex p-1 bg-slate-200/90 rounded-xl border border-slate-300/80 w-full max-w-sm shadow-inner">
               <button
                 type="button"
                 onClick={() => setActiveTrack("jee")}
-                className={`flex-1 py-2 px-3 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                  activeTrack === "jee"
-                    ? "bg-[#142850] text-[#eab308] shadow-md"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
+                className={`flex-1 py-2 px-2 rounded-lg font-bold text-xs flex items-center justify-center gap-1 transition-all cursor-pointer ${activeTrack === "jee"
+                  ? "bg-[#142850] text-[#eab308] shadow-md"
+                  : "text-slate-600 hover:text-slate-900"
+                  }`}
               >
                 <Laptop className="w-3.5 h-3.5" />
-                <span>JEE Combo</span>
+                <span>JEE</span>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTrack("neet")}
-                className={`flex-1 py-2 px-3 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                  activeTrack === "neet"
-                    ? "bg-[#142850] text-sky-400 shadow-md"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
+                className={`flex-1 py-2 px-2 rounded-lg font-bold text-xs flex items-center justify-center gap-1 transition-all cursor-pointer ${activeTrack === "neet"
+                  ? "bg-[#142850] text-sky-400 shadow-md"
+                  : "text-slate-600 hover:text-slate-900"
+                  }`}
               >
                 <Stethoscope className="w-3.5 h-3.5" />
-                <span>NEET Combo</span>
+                <span>NEET</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTrack("iiser")}
+                className={`flex-1 py-2 px-2 rounded-lg font-bold text-xs flex items-center justify-center gap-1 transition-all cursor-pointer ${activeTrack === "iiser"
+                  ? "bg-[#142850] text-purple-400 shadow-md"
+                  : "text-slate-600 hover:text-slate-900"
+                  }`}
+              >
+                <FlaskConical className="w-3.5 h-3.5" />
+                <span>IISER</span>
               </button>
             </div>
           </div>
 
           {/* Cards Grid: Toggled on Mobile, Side-by-Side on Desktop */}
-          <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* JEE Track Combo Card */}
             <div
-              className={`relative bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-2 border-slate-200/90 hover:border-[#eab308] shadow-sm hover:shadow-lg transition-all flex flex-col justify-between ${
-                activeTrack === "jee" ? "block" : "hidden md:flex"
-              }`}
+              className={`relative bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 border-2 border-slate-200/90 hover:border-[#eab308] shadow-sm hover:shadow-lg transition-all flex flex-col justify-between ${activeTrack === "jee" ? "flex" : "hidden md:flex"
+                }`}
             >
               <div>
                 <div className="flex items-center justify-between mb-4">
@@ -124,11 +132,11 @@ const SSATAbout = () => {
                       <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700">
                         Engineering Track
                       </span>
-                      <h4 className="text-lg sm:text-2xl font-black text-[#142850]">JEE Integrated Combo</h4>
+                      <h4 className="text-lg sm:text-xl font-black text-[#142850]">JEE Integrated Combo</h4>
                     </div>
                   </div>
                   <span className="px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-black bg-amber-100 text-amber-800">
-                    3-in-1
+                    4-in-1
                   </span>
                 </div>
 
@@ -168,6 +176,17 @@ const SSATAbout = () => {
                       </div>
                     </div>
                   </div>
+                  <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <div>
+                      <div className="text-xs sm:text-sm font-bold text-[#142850]">
+                        4. CBT Mock Test Series
+                      </div>
+                      <div className="text-[11px] sm:text-xs text-slate-500">
+                        Computer-Based Testing simulation, timed sectional drills &amp; detailed question analysis.
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -182,9 +201,8 @@ const SSATAbout = () => {
 
             {/* NEET Track Combo Card */}
             <div
-              className={`relative bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 border-2 border-slate-200/90 hover:border-sky-500 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between ${
-                activeTrack === "neet" ? "block" : "hidden md:flex"
-              }`}
+              className={`relative bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 border-2 border-slate-200/90 hover:border-sky-500 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between ${activeTrack === "neet" ? "flex" : "hidden md:flex"
+                }`}
             >
               <div>
                 <div className="flex items-center justify-between mb-4">
@@ -196,11 +214,11 @@ const SSATAbout = () => {
                       <span className="text-[10px] font-bold uppercase tracking-wider text-sky-700">
                         Medical Track
                       </span>
-                      <h4 className="text-lg sm:text-2xl font-black text-[#142850]">NEET Integrated Combo</h4>
+                      <h4 className="text-lg sm:text-xl font-black text-[#142850]">NEET Integrated Combo</h4>
                     </div>
                   </div>
                   <span className="px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-black bg-sky-100 text-sky-800">
-                    3-in-1
+                    4-in-1
                   </span>
                 </div>
 
@@ -240,12 +258,106 @@ const SSATAbout = () => {
                       </div>
                     </div>
                   </div>
+                  <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <div>
+                      <div className="text-xs sm:text-sm font-bold text-[#142850]">
+                        4. CBT Mock Test Series
+                      </div>
+                      <div className="text-[11px] sm:text-xs text-slate-500">
+                        Computer-Based Testing simulation, timed sectional drills &amp; detailed question analysis.
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] sm:text-xs font-bold text-slate-500">
                 <span className="flex items-center gap-1 text-[#142850]">
                   <Users className="w-3.5 h-3.5 text-sky-600" />
+                  Max 25 Students / Batch
+                </span>
+                <span className="text-emerald-700 font-extrabold">Complete Package</span>
+              </div>
+            </div>
+
+            {/* IISER Track Combo Card */}
+            <div
+              className={`relative bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 border-2 border-slate-200/90 hover:border-purple-500 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between ${activeTrack === "iiser" ? "flex" : "hidden md:flex"
+                }`}
+            >
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-10 h-10 rounded-xl bg-purple-500/15 text-purple-700 flex items-center justify-center font-bold">
+                      <FlaskConical className="w-5 h-5 text-purple-600" />
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-purple-700">
+                        Research Track
+                      </span>
+                      <h4 className="text-lg sm:text-xl font-black text-[#142850]">IISER Integrated Combo</h4>
+                    </div>
+                  </div>
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-black bg-purple-100 text-purple-800">
+                    4-in-1
+                  </span>
+                </div>
+
+                <div className="space-y-2.5 mb-5">
+                  <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <div>
+                      <div className="text-xs sm:text-sm font-bold text-[#142850]">
+                        1. IISER Preparation
+                      </div>
+                      <div className="text-[11px] sm:text-xs text-slate-500">
+                        Aptitude &amp; subject-focused prep for IISER Aptitude Test (IAT) across PCMB.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <div>
+                      <div className="text-xs sm:text-sm font-bold text-[#142850]">
+                        2. Board Syllabus
+                      </div>
+                      <div className="text-[11px] sm:text-xs text-slate-500">
+                        Full CBSE &amp; ISC Board coverage with solid conceptual &amp; analytical fundamentals.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <div>
+                      <div className="text-xs sm:text-sm font-bold text-[#142850]">
+                        3. Practical
+                      </div>
+                      <div className="text-[11px] sm:text-xs text-slate-500">
+                        Hands-on laboratory sessions, experimental analysis, and school viva preparation.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <div>
+                      <div className="text-xs sm:text-sm font-bold text-[#142850]">
+                        4. CBT Mock Test Series
+                      </div>
+                      <div className="text-[11px] sm:text-xs text-slate-500">
+                        Computer-Based Testing simulation, timed sectional drills &amp; detailed question analysis.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] sm:text-xs font-bold text-slate-500">
+                <span className="flex items-center gap-1 text-[#142850]">
+                  <Users className="w-3.5 h-3.5 text-purple-600" />
                   Max 25 Students / Batch
                 </span>
                 <span className="text-emerald-700 font-extrabold">Complete Package</span>

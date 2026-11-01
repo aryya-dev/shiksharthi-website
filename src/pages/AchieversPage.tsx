@@ -225,10 +225,10 @@ export default function AchieversPage() {
 
         <div className="flex justify-center mt-16 mb-16">
           <div className="bg-white rounded-full border border-slate-200 p-1 flex">
-            {["Boards", "Entrance"].map((item) => (
+            {(["Boards", "Entrance"] as const).map((item) => (
               <button
                 key={item}
-                onClick={() => setMain(item as any)}
+                onClick={() => setMain(item)}
                 className={`px-8 py-2 rounded-full text-sm font-semibold transition-all duration-300
                   ${main === item ? "bg-[#142850] text-white" : "text-slate-600"}`}
               >
