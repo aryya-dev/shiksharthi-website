@@ -343,7 +343,7 @@ function buildAdmitCardCardBodyHTML(record: SSATRegistrationRecord): string {
             <strong>Mandatory Entry Pass:</strong> Candidates must bring this printed Admit Card along with their original School Identity Card or Aadhaar Card.
           </li>
           <li style="margin-bottom: 2px;">
-            <strong>Reporting Time:</strong> Report to the examination venue by <strong>10:30 AM</strong>. Entry gates close at 10:55 AM. No candidate will be allowed after 11:15 AM.
+            <strong>Reporting Time:</strong> Report to the examination venue by <strong>3:30 PM</strong>. Entry gates close strictly at 3:45 PM. No late entry permitted.
           </li>
           <li style="margin-bottom: 2px;">
             <strong>Permitted Stationery:</strong> Use only <strong>Blue or Black ballpoint pens</strong>. Rough sheets will be provided in the examination hall.

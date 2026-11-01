@@ -437,13 +437,13 @@ const SSATRegistration = () => {
                     <tr className="border-b border-slate-200">
                       <td className="py-1 px-2.5 font-bold text-slate-500 bg-slate-50/80">Reporting Time</td>
                       <td className="py-1 px-2.5 font-bold text-amber-700">
-                        10:30 AM (Sharp)
+                        3:30 PM (Sharp)
                       </td>
                     </tr>
                     <tr className="border-b border-slate-200">
                       <td className="py-1 px-2.5 font-bold text-slate-500 bg-slate-50/80">Examination Timing</td>
                       <td className="py-1 px-2.5 font-semibold text-slate-800">
-                        11:00 AM – 1:00 PM (Duration: 2 Hours)
+                        3:30 PM - 6:15 PM
                       </td>
                     </tr>
                     <tr>
@@ -502,7 +502,7 @@ const SSATRegistration = () => {
                   <strong>Mandatory Entry Pass:</strong> Candidates must bring this printed Admit Card along with their original School Identity Card or Aadhaar Card.
                 </li>
                 <li>
-                  <strong>Reporting Time:</strong> Report to the examination venue by <strong>10:30 AM</strong>. Entry gates close at 10:55 AM. No candidate will be allowed after 11:15 AM.
+                  <strong>Reporting Time:</strong> Report to the examination venue by <strong>3:30 PM</strong>. Entry gates close strictly at 3:45 PM. No late entry permitted.
                 </li>
                 <li>
                   <strong>Permitted Stationery:</strong> Use only <strong>Blue or Black ballpoint pens</strong>. Rough sheets will be provided in the examination hall.
