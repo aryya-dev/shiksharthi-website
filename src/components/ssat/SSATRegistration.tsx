@@ -27,7 +27,7 @@ import {
   Download,
 } from "lucide-react";
 
-type Board = "ICSE" | "CBSE" | "WBBSE" | "Other" | "";
+type Board = "CBSE" | "ICSE" | "";
 type ExamDate = "15 November 2026" | "22 November 2026" | "";
 
 interface FormData {
@@ -52,19 +52,19 @@ interface FormErrors {
   consent?: string;
 }
 
-const BOARDS: Board[] = ["ICSE", "CBSE", "WBBSE", "Other"];
+const BOARDS: Board[] = ["CBSE", "ICSE"];
 const EXAM_DATES: { date: ExamDate; day: string; time: string; badge: string; seats: string }[] = [
   {
     date: "15 November 2026",
     day: "Sunday",
-    time: "11:00 AM – 1:00 PM",
+    time: "3:30 PM - 6:15 PM",
     badge: "Slot 1",
     seats: "Filling Fast",
   },
   {
     date: "22 November 2026",
     day: "Sunday",
-    time: "11:00 AM – 1:00 PM",
+    time: "3:30 PM - 6:15 PM",
     badge: "Slot 2",
     seats: "Available",
   },

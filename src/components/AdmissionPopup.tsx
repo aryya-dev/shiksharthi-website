@@ -50,7 +50,7 @@ Phone: ${phone}
 
     const encodedText = encodeURIComponent(text);
 
-    const whatsappNumber = "919836269282";
+    const whatsappNumber = "919051237697";
 
     window.open(
       `https://wa.me/${whatsappNumber}?text=${encodedText}`,

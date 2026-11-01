@@ -3,11 +3,11 @@ import { CheckCircle2, AlertTriangle, FileText, Ban, Clock, PenTool } from "luci
 const eligibilityCriteria = [
   {
     title: "Class 10 Science Stream",
-    desc: "Currently enrolled in Class 10 (Science stream) from ICSE, CBSE, WBBSE, or any recognized board.",
+    desc: "Currently enrolled in Class 10 (Science stream) from CBSE or ICSE Board.",
   },
   {
     title: "Class 11 Science Aspirants",
-    desc: "Open to students aiming to pursue IIT-JEE, NEET, or pure Science excellence in Class 11 (2026–2028 batch).",
+    desc: "Open to students aiming to pursue IIT-JEE, NEET, or pure Science excellence in Class 11 & 12 under CBSE or ISC Board.",
   },
   {
     title: "Mandatory Online Registration",
@@ -19,7 +19,7 @@ const examinationInstructions = [
   {
     icon: FileText,
     title: "Mandatory Entry Pass",
-    desc: "Bring the printed SSAT Admit Card along with your original School ID Card or Aadhaar Card for identity verification.",
+    desc: "Bring the printed SSAT Admit Card/Hall Ticket generated after online registration.",
     type: "info",
   },
   {

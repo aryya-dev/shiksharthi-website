@@ -1,107 +1,155 @@
-﻿import { Trophy, Star, Users, Medal } from "lucide-react";
+import { Trophy, Star, Users, Medal, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-const SSATScholarship = () => (
-  <section id="ssat-scholarship" className="py-24 bg-[#0a1628] relative overflow-hidden">
-    {/* Background */}
-    <div className="absolute inset-0">
-      <div
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: `linear-gradient(#eab308 1px, transparent 1px), linear-gradient(90deg, #eab308 1px, transparent 1px)`,
-          backgroundSize: "60px 60px",
-        }}
-      />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[#eab308]/5 blur-3xl pointer-events-none" />
-    </div>
+const SSATScholarship = () => {
+  const scrollToRegister = () => {
+    document.getElementById("ssat-register")?.scrollIntoView({ behavior: "smooth" });
+  };
 
-    <div className="relative z-10 max-w-6xl mx-auto px-6">
-      <div className="text-center mb-16">
-        <span className="text-sm font-semibold tracking-widest uppercase text-[#eab308]">
-          Scholarship Structure
-        </span>
-        <h2 className="text-3xl md:text-4xl font-bold text-white mt-3">
-          Your Potential Deserves Recognition
-        </h2>
-        <p className="text-white/50 mt-4 max-w-xl mx-auto text-sm leading-relaxed">
-          SSAT rewards academic excellence. The top performers will receive scholarship
-          opportunities to support their journey ahead.
-        </p>
+  return (
+    <section id="ssat-scholarship" className="py-24 bg-[#0a1628] relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: "linear-gradient(#eab308 1px, transparent 1px), linear-gradient(90deg, #eab308 1px, transparent 1px)",
+            backgroundSize: "60px 60px",
+          }}
+        />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-[#eab308]/5 blur-3xl pointer-events-none" />
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+      <div className="relative z-10 max-w-6xl mx-auto px-5 sm:px-6">
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <span className="text-xs font-bold tracking-widest uppercase text-[#eab308] bg-[#eab308]/10 px-3.5 py-1.5 rounded-full border border-[#eab308]/30">
+            Scholarship Architecture
+          </span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mt-4 tracking-tight">
+            Recognizing Excellence. Rewarding Talent.
+          </h2>
+          <p className="text-white/60 mt-3 text-base sm:text-lg leading-relaxed">
+            SSAT ensures that financial constraints never hinder brilliant students from accessing
+            India&apos;s finest mentorship.
+          </p>
+        </div>
 
-        {/* Top 10 - Primary/Hero card */}
-        <div className="relative bg-gradient-to-br from-[#eab308] to-[#b8860b] rounded-3xl p-8 md:p-10 shadow-2xl shadow-[#eab308]/20 overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
-          <div className="absolute top-4 right-4 opacity-10">
-            <Trophy size={120} />
-          </div>
-          <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="h-12 w-12 bg-black/20 rounded-xl flex items-center justify-center">
-                <Trophy size={24} className="text-black" />
-              </div>
-              <div>
-                <p className="text-black/60 text-xs font-semibold tracking-wider uppercase">Top 10 Students</p>
-                <p className="text-black font-bold text-lg leading-tight">Special Recognition</p>
-              </div>
+        {/* 2 Primary Scholarship Cards */}
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-14">
+          {/* Top 10 Hero Gold Card */}
+          <div className="relative bg-gradient-to-br from-[#eab308] via-amber-500 to-[#ca8a04] rounded-3xl p-8 sm:p-10 shadow-2xl shadow-[#eab308]/25 overflow-hidden flex flex-col justify-between group hover:scale-[1.02] transition-transform duration-300">
+            <div className="absolute top-4 right-4 opacity-15 pointer-events-none">
+              <Trophy size={140} className="text-black" />
             </div>
 
-            <div className="mb-6">
-              <p className="text-black/60 text-sm mb-1">Scholarship Amount</p>
-              <p className="text-5xl font-extrabold text-black tracking-tight">₹1,00,000</p>
-            </div>
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/15 text-black text-xs font-black uppercase tracking-wider mb-6">
+                <Star size={14} fill="currentColor" />
+                <span>Premier Laureates</span>
+              </div>
 
-            <div className="space-y-2">
-              {["Performance-based scholarship", "Top 10 rank holders only", "Merit-driven selection"].map((pt, i) => (
-                <div key={i} className="flex items-center gap-2 text-black/80 text-sm">
-                  <Star size={12} className="text-black/60 shrink-0" fill="currentColor" />
-                  {pt}
+              <div className="mb-6">
+                <p className="text-black/70 text-xs font-bold uppercase tracking-wider">
+                  Top 10 Performers
+                </p>
+                <div className="text-5xl sm:text-6xl font-black text-black tracking-tight mt-1">
+                  ₹1,00,000
                 </div>
-              ))}
+                <p className="text-black/80 font-bold text-sm mt-1">
+                  Direct Cash Scholarship Reward
+                </p>
+              </div>
+
+              <div className="space-y-3 border-t border-black/15 pt-5">
+                {[
+                  "₹1,00,000 Direct Cash Scholarship",
+                  "100% Tuition Fee Waiver for 2 Years",
+                  "Guaranteed seat in 25-Student Super Batch",
+                  "JEE/NEET + Boards + Practical Complete Combo",
+                  "Direct 1-on-1 Senior Faculty Mentorship",
+                ].map((pt, i) => (
+                  <div key={i} className="flex items-center gap-2.5 text-black font-semibold text-sm">
+                    <CheckCircle2 size={16} className="text-black shrink-0" />
+                    <span>{pt}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="relative z-10 mt-8 pt-4 border-t border-black/15 text-xs text-black/70 font-bold">
+              Purely performance-based merit selection
+            </div>
+          </div>
+
+          {/* Top 100 Platinum Card */}
+          <div className="relative bg-white/5 border border-white/15 rounded-3xl p-8 sm:p-10 backdrop-blur-md overflow-hidden flex flex-col justify-between group hover:bg-white/10 hover:border-white/25 transition-all duration-300">
+            <div className="absolute top-4 right-4 opacity-5 pointer-events-none">
+              <Users size={140} className="text-white" />
+            </div>
+
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-[#eab308] text-xs font-black uppercase tracking-wider mb-6 border border-white/10">
+                <Medal size={14} />
+                <span>Merit Scholars</span>
+              </div>
+
+              <div className="mb-6">
+                <p className="text-white/60 text-xs font-bold uppercase tracking-wider">
+                  Top 100 Performers
+                </p>
+                <div className="text-5xl sm:text-6xl font-black text-white tracking-tight mt-1">
+                  Top 100
+                </div>
+                <p className="text-[#eab308] font-bold text-sm mt-1">
+                  Substantial Tuition Fee Waivers
+                </p>
+              </div>
+
+              <div className="space-y-3 border-t border-white/10 pt-5">
+                {[
+                  "Tiered Tuition Waivers based on SSAT Rank",
+                  "Priority enrollment in 25-Student Micro Batches",
+                  "Full JEE/NEET + Board + Practical Combo",
+                  "Complete study modules & test series included",
+                  "Personalized academic SWOT diagnostic report",
+                ].map((pt, i) => (
+                  <div key={i} className="flex items-center gap-2.5 text-white/80 font-medium text-sm">
+                    <Star size={16} className="text-[#eab308] shrink-0" fill="currentColor" />
+                    <span>{pt}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="relative z-10 mt-8 pt-4 border-t border-white/10 text-xs text-white/50">
+              Transparent evaluation across accredited exam centers
             </div>
           </div>
         </div>
 
-        {/* Top 100 card */}
-        <div className="bg-white/5 border border-white/10 rounded-3xl p-8 md:p-10 relative overflow-hidden group hover:bg-white/8 hover:border-white/20 transition-all duration-300">
-          <div className="absolute top-4 right-4 opacity-5">
-            <Users size={120} className="text-white" />
+        {/* Bottom CTA Banner */}
+        <div className="max-w-4xl mx-auto bg-gradient-to-r from-white/10 via-white/5 to-white/10 rounded-3xl p-6 sm:p-8 border border-white/15 text-center flex flex-col sm:flex-row items-center justify-between gap-5">
+          <div className="text-center sm:text-left">
+            <h4 className="text-xl font-extrabold text-white">
+              Ready to Claim Your Scholarship &amp; 25-Student Batch Seat?
+            </h4>
+            <p className="text-white/60 text-sm mt-1">
+              Offline examination on 15 &amp; 22 November 2026. Limited test seats.
+            </p>
           </div>
-          <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="h-12 w-12 bg-[#eab308]/10 border border-[#eab308]/20 rounded-xl flex items-center justify-center">
-                <Medal size={24} className="text-[#eab308]" />
-              </div>
-              <div>
-                <p className="text-white/50 text-xs font-semibold tracking-wider uppercase">Top 100 Students</p>
-                <p className="text-white font-bold text-lg leading-tight">Scholarship Opportunities</p>
-              </div>
-            </div>
-
-            <div className="mb-6">
-              <p className="text-white/50 text-sm mb-1">Who qualifies</p>
-              <p className="text-5xl font-extrabold text-white tracking-tight">Top 100</p>
-            </div>
-
-            <div className="space-y-2">
-              {["Scholarship for top 100 performers", "Based on examination performance", "Details communicated by Shiksharthi"].map((pt, i) => (
-                <div key={i} className="flex items-center gap-2 text-white/60 text-sm">
-                  <Star size={12} className="text-[#eab308] shrink-0" fill="currentColor" />
-                  {pt}
-                </div>
-              ))}
-            </div>
-          </div>
+          <Button
+            onClick={scrollToRegister}
+            size="lg"
+            className="bg-[#eab308] hover:bg-[#d4a307] text-slate-950 font-black px-7 py-6 rounded-2xl shadow-lg shadow-[#eab308]/20 transition-all hover:scale-105 shrink-0 cursor-pointer"
+          >
+            <span>Register Now</span>
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
         </div>
       </div>
-
-      {/* Note */}
-      <p className="text-center text-white/30 text-xs mt-10 max-w-md mx-auto">
-        Scholarship allocation and distribution criteria will be communicated by Shiksharthi Educational Institute.
-        Selection is purely merit-based through the SSAT examination.
-      </p>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 export default SSATScholarship;

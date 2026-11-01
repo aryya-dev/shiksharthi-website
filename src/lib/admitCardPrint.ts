@@ -280,13 +280,13 @@ function buildAdmitCardCardBodyHTML(record: SSATRegistrationRecord): string {
               <tr style="border-bottom: 1px solid #e2e8f0;">
                 <td style="padding: 4px 10px; font-weight: 700; color: #64748b; background: #f8fafc;">Reporting Time</td>
                 <td style="padding: 4px 10px; font-weight: 800; color: #b45309;">
-                  10:30 AM (Sharp)
+                  3:30 PM (Sharp)
                 </td>
               </tr>
               <tr style="border-bottom: 1px solid #e2e8f0;">
                 <td style="padding: 4px 10px; font-weight: 700; color: #64748b; background: #f8fafc;">Examination Timing</td>
                 <td style="padding: 4px 10px; font-weight: 600; color: #1e293b;">
-                  11:00 AM – 1:00 PM (Duration: 2 Hours)
+                  3:30 PM - 6:15 PM
                 </td>
               </tr>
               <tr>
