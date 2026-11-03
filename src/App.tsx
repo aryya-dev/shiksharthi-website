@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ScrollManager from "@/components/ScrollManager";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 import SSATPopupModal from "@/components/SSATPopupModal";
+import SSATFloatingButton from "@/components/ssat/SSATFloatingButton";
 
 import MainLayout from "./layouts/MainLayout";
 import Index from "./pages/Index";
@@ -37,6 +38,9 @@ function App() {
           <ScrollManager />
           <ScrollToTopButton />
           <SSATPopupModal />
+
+          {/* Global SSAT Floating Button */}
+          <SSATFloatingButton />
 
           <Suspense fallback={<PageLoader />}>
             <Routes>

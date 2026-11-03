@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+﻿import { Button } from "@/components/ui/button";
 import {
   Calendar,
   Trophy,
@@ -76,23 +76,55 @@ const SSATHero = () => {
               for JEE &amp; NEET.
             </p>
 
-            {/* Quick 3-Key Highlights - Compact on Mobile */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-1">
-              <div className="bg-white/5 border border-white/10 rounded-xl sm:rounded-2xl p-2.5 sm:p-3 text-center sm:text-left">
+
+            {/* Quick Highlights */}
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 pt-2">
+              <div className="bg-white/5 border border-white/10 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center">
                 <div className="text-[10px] sm:text-xs text-white/60">Top 10 Award</div>
-                <div className="text-xs sm:text-sm font-black text-[#eab308] mt-0.5">₹1 Lakh Cash</div>
+                <div className="text-sm sm:text-base font-black text-[#eab308] mt-1">
+                  ₹1 Lakh Cash
+                </div>
               </div>
 
-              <div className="bg-white/5 border border-white/10 rounded-xl sm:rounded-2xl p-2.5 sm:p-3 text-center sm:text-left">
+              <div className="bg-white/5 border border-white/10 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center">
                 <div className="text-[10px] sm:text-xs text-white/60">Exclusive Cohort</div>
-                <div className="text-xs sm:text-sm font-black text-sky-400 mt-0.5">25 Students</div>
-              </div>
-
-              <div className="bg-white/5 border border-white/10 rounded-xl sm:rounded-2xl p-2.5 sm:p-3 text-center sm:text-left">
-                <div className="text-[10px] sm:text-xs text-white/60">Exam Dates</div>
-                <div className="text-xs sm:text-sm font-black text-emerald-400 mt-0.9">15 &amp; 22 Nov</div>
+                <div className="text-sm sm:text-base font-black text-sky-400 mt-1">
+                  25 Students
+                </div>
               </div>
             </div>
+
+            {/* Prominent Exam Dates */}
+
+            {/* Compact Exam Date Highlight */}
+            <div className="mt-3 sm:mt-4 rounded-xl border border-[#eab308]/40 bg-[#eab308]/10 px-3 py-3 sm:px-4 sm:py-3.5">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Calendar className="w-4 h-4 text-[#eab308]" />
+                <span className="text-[10px] sm:text-xs font-extrabold uppercase tracking-widest text-[#eab308]">
+                  Examination Dates · November 2026
+                </span>
+              </div>
+
+              <div className="flex items-center justify-center gap-3 sm:gap-6">
+                <div className="text-center">
+                  <span className="text-2xl sm:text-3xl font-black text-white">15</span>
+                  <span className="text-xs sm:text-sm font-bold text-white/75 ml-1">November</span>
+                </div>
+
+                <div className="h-8 w-px bg-white/20" />
+
+                <div className="text-center">
+                  <span className="text-2xl sm:text-3xl font-black text-white">22</span>
+                  <span className="text-xs sm:text-sm font-bold text-white/75 ml-1">November</span>
+                </div>
+              </div>
+
+              <p className="text-center text-[10px] text-white/55 mt-1.5">
+                Offline Examination
+              </p>
+            </div>
+
+
 
             {/* Actions - Big & Touch-friendly */}
             <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-4 justify-center lg:justify-start pt-2 sm:pt-3">
@@ -142,8 +174,8 @@ const SSATHero = () => {
                     <span className="text-white font-black">25 Students Only</span>
                   </div>
                   <div className="flex items-center justify-between text-xs font-bold text-white/85 px-3 py-2 rounded-xl bg-white/5 border border-white/10">
-                    <span className="text-emerald-400">📅 Offline Exam</span>
-                    <span className="text-white font-black">15 &amp; 22 Nov 2026</span>
+                    <span className="text-emerald-400">📅 Exam Dates</span>
+                    <span className="text-white font-black">15 & 22 November 2026</span>
                   </div>
                 </div>
               </div>

@@ -77,14 +77,14 @@ const EXAM_DATES: { date: ExamDate; day: string; time: string; badge: string; se
   {
     date: "15 November 2026",
     day: "Sunday",
-    time: "3:30 PM - 6:15 PM",
+    time: "3:45 PM - 5:45 PM",
     badge: "Slot 1",
     seats: "Filling Fast",
   },
   {
     date: "22 November 2026",
     day: "Sunday",
-    time: "3:30 PM - 6:15 PM",
+    time: "3:45 PM - 5:45 PM",
     badge: "Slot 2",
     seats: "Available",
   },
