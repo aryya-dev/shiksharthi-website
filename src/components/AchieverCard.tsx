@@ -24,14 +24,14 @@ export default function AchieverCard({ achiever }: { achiever: Achiever }) {
       <div className="absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-[#eab308]/15">
         <Trophy className="h-4 w-4 text-[#eab308]" />
       </div>
-      <div className="mx-auto mb-4 mt-5 h-28 w-28 overflow-hidden rounded-xl border border-slate-200 bg-slate-100 shadow-sm sm:h-32 sm:w-32">
+      <div className="mx-auto mb-4 mt-5 aspect-[4/5] w-28 overflow-hidden rounded-xl border border-slate-200 bg-slate-100 shadow-sm sm:w-32">
         <img
           src={achiever.image}
           alt={displayName}
           loading="lazy"
           decoding="async"
-          className={`h-full w-full ${hasSeparatePortrait ? "object-cover" : "object-cover scale-[2.05]"}`}
-          style={hasSeparatePortrait ? undefined : { objectPosition: "50% 38%" }}
+          className={`h-full w-full object-cover ${hasSeparatePortrait ? "" : "scale-[1.4]"}`}
+          style={hasSeparatePortrait ? undefined : { objectPosition: "50% 28%" }}
         />
       </div>
       <p className="text-xs uppercase tracking-wider text-slate-400">{achiever.class ? `Class ${achiever.class}` : "Entrance"}</p>
