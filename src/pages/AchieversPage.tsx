@@ -7,72 +7,72 @@ import AchieverCard from "../components/AchieverCard";
 
 const achievers = [
   // 2026
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Anshika Pandey.jpg.jpeg", name: "Anshika Pandey", score: "99%" }
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Anshika Pandey.jpg.jpeg", name: "Anshika Pandey", score: "99%" },
 
   // 2025
-  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Shambhavi Majumder Achiever.jpeg", name: "Shambhavi Majumder", score: "97.4%" }
+  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Shambhavi Majumder Achiever.jpeg", name: "Shambhavi Majumder", score: "97.4%" },
 
   // 2026
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Sohan Ghoshal.jpg.jpeg", name: "Sohan Ghoshal", score: "98%" }
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Dyuti Jana.jpg.jpeg", name: "Dyuti Jana", score: "97.2%" }
-  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Sohani Parveen Achiever.jpeg", name: "Sohani Parveen", score: "96.75%" }
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Debapriya Basak.jpg.jpeg", name: "Debapriya Basak", score: "96%" }
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Rishav Patra.jpg.jpeg", name: "Rishav Patra", score: "96%" }
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Sohan Ghoshal.jpg.jpeg", name: "Sohan Ghoshal", score: "98%" },
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Dyuti Jana.jpg.jpeg", name: "Dyuti Jana", score: "97.2%" },
+  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Sohani Parveen Achiever.jpeg", name: "Sohani Parveen", score: "96.75%" },
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Debapriya Basak.jpg.jpeg", name: "Debapriya Basak", score: "96%" },
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Rishav Patra.jpg.jpeg", name: "Rishav Patra", score: "96%" },
 
 
 
   // 2026
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Aditi Pandey.jpg.jpeg", name: "Aditi Pandey", score: "95.75%" }
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Shibani Bhattacharjee.jpg.jpeg", name: "Shibani Bhattacharjee", score: "95.75%" }
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Aditi Pandey.jpg.jpeg", name: "Aditi Pandey", score: "95.75%" },
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Shibani Bhattacharjee.jpg.jpeg", name: "Shibani Bhattacharjee", score: "95.75%" },
 
   // 2025
-  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Rishika Joshi Achiever.jpeg", name: "Rishika Joshi", score: "95.75%" }
-  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Anoushka Ghosh Achiever.jpeg", name: "Anoushka Ghosh", score: "95.50%" }
-  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Tanisha Kesri Achiever.jpeg", name: "Tanisha Kesri", score: "95.4%" }
-  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Madhurima Pal Achiever.jpeg", name: "Madhurima Pal", score: "95%" }
+  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Rishika Joshi Achiever.jpeg", name: "Rishika Joshi", score: "95.75%" },
+  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Anoushka Ghosh Achiever.jpeg", name: "Anoushka Ghosh", score: "95.50%" },
+  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Tanisha Kesri Achiever.jpeg", name: "Tanisha Kesri", score: "95.4%" },
+  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Madhurima Pal Achiever.jpeg", name: "Madhurima Pal", score: "95%" },
 
   // 2026
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Disha Sharma.jpg.jpeg", name: "Disha Sharma", score: "95%" }
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Disha Sharma.jpg.jpeg", name: "Disha Sharma", score: "95%" },
 
   // 2025
-  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Nikhil Sharma Achiever.jpeg", name: "Nikhil Sharma", score: "94.25%" }
+  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Nikhil Sharma Achiever.jpeg", name: "Nikhil Sharma", score: "94.25%" },
 
   // 2026
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Megha Banerjee.jpg.jpeg", name: "Megha Banerjee", score: "94.25%" }
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Megha Banerjee.jpg.jpeg", name: "Megha Banerjee", score: "94.25%" },
 
   // 2026
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Bhumika Mundhra.jpg.jpeg", name: "Bhumika Mundhra", score: "94%" }
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Bhumika Mundhra.jpg.jpeg", name: "Bhumika Mundhra", score: "94%" },
 
   // 2025
-  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Shreya Mishra Achiever.jpeg", name: "Shreya Mishra", score: "93%" }
+  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Shreya Mishra Achiever.jpeg", name: "Shreya Mishra", score: "93%" },
 
   // 2026
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Nidhi Rathi.jpg.jpeg", name: "Nidhi Rathi", score: "93.75%" }
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Utsa Sarkar.jpg.jpeg", name: "Utsa Sarkar", score: "93.25%" }
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Divya Teltia.jpg.jpeg", name: "Divya Teltia", score: "92.75%" }
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Prashri More.jpg.jpeg", name: "Prashri More", score: "92.6%" }
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Nidhi Rathi.jpg.jpeg", name: "Nidhi Rathi", score: "93.75%" },
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Utsa Sarkar.jpg.jpeg", name: "Utsa Sarkar", score: "93.25%" },
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Divya Teltia.jpg.jpeg", name: "Divya Teltia", score: "92.75%" },
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Prashri More.jpg.jpeg", name: "Prashri More", score: "92.6%" },
 
   // 2025
-  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Ishita Saha Achiever.jpeg", name: "Ishita Saha", score: "92.25%" }
+  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Ishita Saha Achiever.jpeg", name: "Ishita Saha", score: "92.25%" },
 
   // 2026
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Sunita Gaura.jpg.jpeg", name: "Sunita Gaura", score: "91.75%" }
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Anuraag Das.jpg.jpeg", name: "Anuraag Das", score: "91.5%" }
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Shreyan Jana.jpg.jpeg", name: "Shreyan Jana", score: "91.2%" }
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Sunita Gaura.jpg.jpeg", name: "Sunita Gaura", score: "91.75%" },
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Anuraag Das.jpg.jpeg", name: "Anuraag Das", score: "91.5%" },
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Shreyan Jana.jpg.jpeg", name: "Shreyan Jana", score: "91.2%" },
 
   // 2025
-  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Aryya Bandyopadhyay ;)Achiever.jpeg", name: "Aryya Bandyopadhyay", score: "91%" }
-  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Sagnik Kundu Achiever.jpeg", name: "Sagnik Kundu", score: "91%" }
+  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Aryya Bandyopadhyay ;)Achiever.jpeg", name: "Aryya Bandyopadhyay", score: "91%" },
+  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Sagnik Kundu Achiever.jpeg", name: "Sagnik Kundu", score: "91%" },
 
   // 2026
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Arka Das.jpg.jpeg", name: "Arka Das", score: "91%" }
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Krishnendu Ghosh.jpg.jpeg", name: "Krishnendu Ghosh", score: "91%" }
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Paridhi Mishra.jpg.jpeg", name: "Paridhi Mishra", score: "90.8%" }
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Dishari Das.jpg.jpeg", name: "Dishari Das", score: "90.75%" }
-  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Ishita Singh.jpg.jpeg", name: "Ishita Singh", score: "90.75%" }
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Arka Das.jpg.jpeg", name: "Arka Das", score: "91%" },
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Krishnendu Ghosh.jpg.jpeg", name: "Krishnendu Ghosh", score: "91%" },
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Paridhi Mishra.jpg.jpeg", name: "Paridhi Mishra", score: "90.8%" },
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Dishari Das.jpg.jpeg", name: "Dishari Das", score: "90.75%" },
+  { category: "Boards", class: "12", year: "2026", image: "/achievers-img/Ishita Singh.jpg.jpeg", name: "Ishita Singh", score: "90.75%" },
 
   // 2025
-  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Tanush Kesri Achiever.jpeg", name: "Tanush Kesri", score: "90.5%" }
+  { category: "Boards", class: "12", year: "2025", image: "/achievers-img/Tanush Kesri Achiever.jpeg", name: "Tanush Kesri", score: "90.5%" },
 
 
   // ===== Boards Class 10 - 2026 =====
@@ -229,6 +229,8 @@ export default function AchieversPage() {
             <Trophy className="h-4 w-4 text-[#eab308]" /> ALL INDIA RANKERS
           </div>
         </div>
+
+        <div className="mb-12"><AchieversSection showButton={false} compact /></div>
 
         <div className="mx-auto mb-8 max-w-2xl">
           <label htmlFor="achiever-search" className="sr-only">Search achievers by student name or school</label>
