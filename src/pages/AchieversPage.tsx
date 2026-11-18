@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Search, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { ArrowLeftCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -198,6 +199,23 @@ const achievers = [
 export default function AchieversPage() {
   const navigate = useNavigate();
   const [main, setMain] = useState<"Boards" | "Entrance">("Boards");
+  const [searchInput, setSearchInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredAchievers = achievers.filter((achiever) => {
+    const query = searchQuery.trim().toLocaleLowerCase();
+    if (!query) return true;
+    const filename = achiever.image.split("/").pop() ?? "";
+    const studentName = filename
+      .replace(/\.(jpg|jpeg|png|webp)+$/i, "")
+      .replace(/\s*(Achiever|AIRPreview).*$/i, "")
+      .replace(/\s*\(\d+\)$/i, "")
+      .replace(/\.jpg$/i, "")
+      .trim();
+    return [studentName, achiever.class, achiever.year]
+      .some((value) => value?.toLocaleLowerCase().includes(query));
+  });
+  const hasSearchResults = filteredAchievers.some((achiever) => achiever.category === main);
 
   const years10 = [...new Set(
     achievers
@@ -223,6 +241,14 @@ export default function AchieversPage() {
           compact
         />
 
+        <form role="search" onSubmit={(event) => { event.preventDefault(); setSearchQuery(searchInput.trim()); }} className="mx-auto mb-8 flex w-full max-w-xl items-center gap-2">
+          <label className="sr-only" htmlFor="achievers-search">Search achievers</label>
+          <input id="achievers-search" type="search" value={searchInput} onChange={(event) => setSearchInput(event.target.value)} placeholder="Search by student name, class, or year" className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm text-[#142850] outline-none focus:border-[#142850] focus:ring-2 focus:ring-[#142850]/15" />
+          <button type="submit" className="inline-flex items-center gap-2 rounded-lg bg-[#142850] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#1d3b70]"><Search className="h-4 w-4" />Search</button>
+          {searchInput && <button type="button" onClick={() => { setSearchInput(""); setSearchQuery(""); }} aria-label="Clear achiever search" className="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm font-semibold text-[#142850] transition hover:bg-slate-50"><X className="h-4 w-4" />Clear</button>}
+        </form>
+        {searchQuery && !hasSearchResults && <p role="status" className="mb-8 text-center text-sm text-slate-600">No achievers found. Try another name, class, or year.</p>}
+
         <div className="flex justify-center mt-16 mb-16">
           <div className="bg-white rounded-full border border-slate-200 p-1 flex">
             {(["Boards", "Entrance"] as const).map((item) => (
@@ -245,7 +271,7 @@ export default function AchieversPage() {
             </h2>
 
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-24">
-              {achievers
+              {filteredAchievers
                 .filter(a => a.category === "Boards" && a.class === "12")
                 .map((a, index) => (
                   <motion.div
@@ -280,7 +306,7 @@ export default function AchieversPage() {
                 </h3>
 
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                  {achievers
+                  {filteredAchievers
                     .filter(a =>
                       a.category === "Boards" &&
                       a.class === "10" &&
@@ -312,7 +338,7 @@ export default function AchieversPage() {
 
         {main === "Entrance" && (
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {achievers
+            {filteredAchievers
               .filter(a => a.category === "Entrance")
               .map((a, index) => (
                 <motion.div
